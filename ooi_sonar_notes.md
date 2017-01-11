@@ -25,23 +25,14 @@ In this project we will focus on the sonar echo data collected using modified Ko
 
 The data are echo time series of multiple sonar _pings_ transmitted roughly every second. For each ping, the returning echoes form a time series, which can be converted to _depth_ by calculating the two-way travel time of sound from any particular point in the water colume to the sonar transducer. By plotting the returning echo time series across pings, we arrive at the _echograms_ as shown below.
 
-Echogram at 38 kHz:
-<figure>
-  <img src=".\img\ooi_ex_38k.png width="300">
-</figure>
+![Exemplary OOI echogram at 38 and 120 kHz.](./img/ooi_echogram_example.png)
 
-Echogram at 120 kHz:
-<figure>
-  <img src=".\img\ooi_ex_120k.png width="300">
-</figure>
+Similar data are routinely collected using ship-mounted echosounders on all research vessels from NOAA and other agencies. Below is an example.
+![Exemplary OOI echogram at 38 and 120 kHz.](./img/ship_echogram_example.png)
 
 Note the two freuqencies of data were collected nearly simultaneously.
 
 
 ## Other resources
 * [Ocean Network Canada](www.oceannetworks.ca/)'s wiki page about their data product [ASL Acoustic Profiler Time Series](https://wiki.oceannetworks.ca/display/DP/24). The ASL echosounders are also used on un-cabled OOI nodes.
-
-
-
-
 
