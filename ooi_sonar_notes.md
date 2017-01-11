@@ -7,21 +7,9 @@
 
 The sonar data files are current only accessible from the [OOI Raw Data Archive](http://oceanobservatories.org/data/raw-data/) and _not_ on the [OOI Data Portal](http://oceanobservatories.org/data-portal/). Individual instruments are indexed using the Reference Designator instrument code shown below:
 
-| Array   | Reference       | Designator             |
-|:-------:|:---------------:|:----------------------:|
-|Coastal  | Pioneer         | CP01CNSM-MFD37-07-ZPLSC|
-|Coastal  | Pioneer	       | CP03ISSM-MFD37-07-ZPLSC|
-|Coastal  | Pioneer	       | CP04OSSM-MFD37-07-ZPLSC|
-|Coastal  | Endurance	       | CE01ISSM-MFD37-07-ZPLSC|
-|Coastal  | Endurance	       | CE06ISSM-MFD37-07-ZPLSC|
-|Coastal  | Endurance       | CE07SHSM-MFD37-07-ZPLSC|
-|Coastal  | Endurance       | CE09OSSM-MFD37-07-ZPLSC|
-|Global   | Argentine Basin | GA02HYPM-MPM01-02-ZPLSG|
-|Global   | Irminger        | GI02HYPM-MPM01-02-ZPLSG|
-|Global   | Station Pap     | GP02HYPM-MPM01-02-ZPLSG|
-|Global   | Southern Ocean  | GS02HYPM-MPM01-02-ZPLSG|
-|Coastal  | Endurance	       | CE02SHBP-MJ01C-07-ZPLSC|
-|Coastal  | Endurance	       | CE04OSPS-PC01B-05-ZPLSC|
+| Type | Instrument | Depth | Array |
+|:----:|:---------------------------:|:-----:|:-----:|
+|Kongsberg EK60|CE02SHBP-MJ01C-07-ZPLSCB101	|80m	| Coastal Endurance||Kongsberg EK60|CE04OSPS-PC01B-05-ZPLSCB102	|200m| Coastal Endurance||ASL coastal|CE01ISSM-MFD37-07-ZPLSCC000	|25m		|Coastal Endurance||ASL coastal|CE06ISSM-MFD37-07-ZPLSCC000	|29m		|Coastal Endurance||ASL coastal|CE07SHSM-MFD37-07-ZPLSCC000	|87m		|Coastal Endurance||ASL coastal|CE09OSSM-MFD37-07-ZPLSCC000	|540m	|Coastal Endurance||ASL coastal|CP01CNSM-MFD37-07-ZPLSCC000	|133m	|Coastal Pioneer||ASL coastal|CP03ISSM-MFD37-07-ZPLSCC000	|92m		|Coastal Pioneer||ASL coastal|CP04OSSM-MFD37-07-ZPLSCC000	|450m	|Coastal Pioneer||ASL Global|GA02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Argentine Basin||ASL Global|GA02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Argentine Basin||ASL Global|GI02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Irminger Sea||ASL Global|GI02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Irminger Sea||ASL Global|GP02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Station Papa||ASL Global|GP02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Station Papa||ASL Global|GS02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Southern Ocean||ASL Global|GS02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Southern Ocean|
 
 Additional information about the instruments can be found at these locations by searching for the "zpls" instrument code. The data management team at Rutgers are working on centralizing these resources.
 
