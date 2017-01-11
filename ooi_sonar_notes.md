@@ -1,4 +1,5 @@
 # OOI Sonar for Ecosystem Monitoring
+[Link](https://github.com/uwescience/incubator2017/wiki/OOI-Sonar-for-Ecosystem-Monitoring) to project charter
 
 ## Data sources
 * Contact point: Friedrich Knuth (knuth@marine.rutgers.edu)
