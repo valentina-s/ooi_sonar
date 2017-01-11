@@ -35,19 +35,13 @@ Below are a few related websites:
 ## Data type and features
 In this project we will focus on the sonar echo data collected using modified Kongberg Simrad EK60 echosounders (those with instrument code ZPLSC-**B**). The files are typically 50 MB in size, each containing ~11 hours of echo data. The data are in _.raw_ format, which is a compressed data format from the manufacturer. We currently have a Matlab and [a Python package](https://github.com/oceanobservatories/mi-instrument/tree/master/mi/instrument/kut/ek60/ooicore) that can unpack the data and plot an echogram (see below).
 
-The data are echo time series of multiple sonar _pings_ transmitted roughly every second. For each ping, the returning echoes form a time series, which can be converted to _depth_ by calculating the two-way travel time of sound from any particular point in the water colume to the sonar transducer. By plotting the returning echo time series across pings, we arrive at the _echograms_ as shown below.
+The data are echo time series of multiple sonar _pings_ transmitted roughly every second. For each ping, the returning echoes form a time series, which can be converted to _depth_ by calculating the two-way travel time of sound from any particular point in the water colume to the sonar transducer. By plotting the returning echo time series across pings, we arrive at the _echograms_ as shown below. Note the echosounders are inverted (pointing upward) so we don't see seafloor in the data. Also the two freuqencies of data were collected nearly simultaneously.
 
-Echogram at 38 kHz:
-<figure>
-  <img src=".\img\ooi_ex_38k.png width="300">
-</figure>
+![Exemplary OOI echogram at 38 and 120 kHz.](./img/ooi_echogram_example.png)
 
-Echogram at 120 kHz:
-<figure>
-  <img src=".\img\ooi_ex_120k.png width="300">
-</figure>
+Similar data are routinely collected using ship-mounted echosounders on all research vessels from NOAA and other agencies. Below is an example.
+![Exemplary OOI echogram at 38 and 120 kHz.](./img/ship_echogram_example.png)
 
-Note the two freuqencies of data were collected nearly simultaneously.
 
 
 ## Other resources
