@@ -5,11 +5,27 @@
 * Contact point: Friedrich Knuth (knuth@marine.rutgers.edu)
 * Official OOI data help: help@oceanobservatories.org
 
-The sonar data files are current only accessible from the [OOI Raw Data Archive](http://oceanobservatories.org/data/raw-data/) and _not_ on the [OOI Data Portal](http://oceanobservatories.org/data-portal/). Individual instruments are indexed using the Reference Designator instrument code shown below:
+The sonar data files are current only accessible from the [OOI Raw Data Archive](https://rawdata.oceanobservatories.org/files/), which has a brief [documentation here](http://oceanobservatories.org/data/raw-data/), and _not_ on the [OOI Data Portal](http://oceanobservatories.org/data-portal/). Individual instruments are indexed using the Reference Designator instrument code shown below:
 
 | Type | Instrument | Depth | Array |
 |:----:|:---------------------------:|:-----:|:-----:|
-|Kongsberg EK60|CE02SHBP-MJ01C-07-ZPLSCB101	|80m	| Coastal Endurance||Kongsberg EK60|CE04OSPS-PC01B-05-ZPLSCB102	|200m| Coastal Endurance||ASL coastal|CE01ISSM-MFD37-07-ZPLSCC000	|25m		|Coastal Endurance||ASL coastal|CE06ISSM-MFD37-07-ZPLSCC000	|29m		|Coastal Endurance||ASL coastal|CE07SHSM-MFD37-07-ZPLSCC000	|87m		|Coastal Endurance||ASL coastal|CE09OSSM-MFD37-07-ZPLSCC000	|540m	|Coastal Endurance||ASL coastal|CP01CNSM-MFD37-07-ZPLSCC000	|133m	|Coastal Pioneer||ASL coastal|CP03ISSM-MFD37-07-ZPLSCC000	|92m		|Coastal Pioneer||ASL coastal|CP04OSSM-MFD37-07-ZPLSCC000	|450m	|Coastal Pioneer||ASL Global|GA02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Argentine Basin||ASL Global|GA02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Argentine Basin||ASL Global|GI02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Irminger Sea||ASL Global|GI02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Irminger Sea||ASL Global|GP02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Station Papa||ASL Global|GP02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Station Papa||ASL Global|GS02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Southern Ocean||ASL Global|GS02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Southern Ocean|
+|Kongsberg EK60|CE02SHBP-MJ01C-07-ZPLSCB101	|80m	| Coastal Endurance|
+|Kongsberg EK60|CE04OSPS-PC01B-05-ZPLSCB102	|200m| Coastal Endurance|
+|ASL coastal|CE01ISSM-MFD37-07-ZPLSCC000	|25m		|Coastal Endurance|
+|ASL coastal|CE06ISSM-MFD37-07-ZPLSCC000	|29m		|Coastal Endurance|
+|ASL coastal|CE07SHSM-MFD37-07-ZPLSCC000	|87m		|Coastal Endurance|
+|ASL coastal|CE09OSSM-MFD37-07-ZPLSCC000	|540m	|Coastal Endurance|
+|ASL coastal|CP01CNSM-MFD37-07-ZPLSCC000	|133m	|Coastal Pioneer|
+|ASL coastal|CP03ISSM-MFD37-07-ZPLSCC000	|92m		|Coastal Pioneer|
+|ASL coastal|CP04OSSM-MFD37-07-ZPLSCC000	|450m	|Coastal Pioneer|
+|ASL Global|GA02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Argentine Basin|
+|ASL Global|GA02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Argentine Basin|
+|ASL Global|GI02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Irminger Sea|
+|ASL Global|GI02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Irminger Sea|
+|ASL Global|GP02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Station Papa|
+|ASL Global|GP02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Station Papa|
+|ASL Global|GS02HYPM-MPM01-02-ZPLSGA009	|150m	|Global Southern Ocean|
+|ASL Global|GS02HYPM-MPM01-02-ZPLSGA010	|150m	|Global Southern Ocean|
 
 Additional information about the instruments can be found at these locations by searching for the "zpls" instrument code. The data management team at Rutgers are working on centralizing these resources.
 
@@ -35,4 +51,4 @@ Note the two freuqencies of data were collected nearly simultaneously.
 
 ## Other resources
 * [Ocean Network Canada](www.oceannetworks.ca/)'s wiki page about their data product [ASL Acoustic Profiler Time Series](https://wiki.oceannetworks.ca/display/DP/24). The ASL echosounders are also used on un-cabled OOI nodes.
-
+* [Example code](https://github.com/billhowe/ooifetch/blob/master/fetchmovies.py) to look and fetch movies from OOI raw data server.
