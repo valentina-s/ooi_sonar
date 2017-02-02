@@ -34,3 +34,19 @@
 * Indicator function: `[int(x == '20150911') for x in date_list]`
 * map and lambda: `map(lambda x: x.group('Date'),raw_file_times)`
 * ways to iterate over dictionary: `freq = {k: str(int(v/1E3))+'k' for (k,v) in frequencies.items()}  # get frequencies`
+
+## 2017/01/30-02/01
+* Use memory profiler:
+	```
+	%load_ext memory_profiler
+	%load_ext line_profiler
+	%mprun -f concat_raw concat_raw(data_path,fname_all,date_wanted)
+	```
+* The xarray format is based on netCDF, which is based on HDF5 in the recent version.
+* Matlab has functions to directly import and export HDF5, so we'll use HDF5 for now and devise another structure to store metadata.
+* Found out that function `ZPLSPlot` actually transpose and flip `power_data_dict` during `__init__` by calling `_transpose_and_flip(power_data_dict)`, and that's why with and without the plotting routine the data matrix dimensions are changed
+* `matplotlib` [subplot demo](http://matplotlib.org/examples/pylab_examples/subplots_demo.html)
+
+
+## TO-DO
+* 

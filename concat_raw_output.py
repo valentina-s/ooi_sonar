@@ -5,12 +5,6 @@ import glob
 # import numpy as np   # already imported in zplsc_b
 from datetime import datetime
 
-# data_path='/Volumes/wjlee_apl_2/ooi_zplsc_80m/'
-# fname_form='OOI-D*.raw'  # index all files in 2015
-# fname_all = glob.glob(os.path.join(data_path,fname_form))
-
-# raw_file_times = [extract_file_time(os.path.join(data_path,x)) for x in fname_all]
-
 def get_data_mtx(power_data_dict,frequencies):
     fval = frequencies.values()
     fidx = sorted(range(len(fval)), key=lambda k: fval[k])   # get key sequence for low to high freq
@@ -19,7 +13,6 @@ def get_data_mtx(power_data_dict,frequencies):
                      power_data_dict[fidx[1]],\
                      power_data_dict[fidx[2]]))  # organize all values into matrix
 
-# date_wanted = ['20150910','20150914']
 
 def concat_raw(data_path,fname_all,date_wanted):
 
@@ -60,6 +53,7 @@ def concat_raw(data_path,fname_all,date_wanted):
     else:
         print 'date wanted does not exist!'
 
+    return data_mtx
 
         # if power_data_dict[fidx[0]].shape==power_data_dict[fidx[1]].shape==power_data_dict[fidx[2]].shape:
         # power_mtx_temp = np.array((power_data_dict[fidx[0]],\
