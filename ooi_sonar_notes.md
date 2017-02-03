@@ -46,7 +46,17 @@
 * Matlab has functions to directly import and export HDF5, so we'll use HDF5 for now and devise another structure to store metadata.
 * Found out that function `ZPLSPlot` actually transpose and flip `power_data_dict` during `__init__` by calling `_transpose_and_flip(power_data_dict)`, and that's why with and without the plotting routine the data matrix dimensions are changed
 * `matplotlib` [subplot demo](http://matplotlib.org/examples/pylab_examples/subplots_demo.html)
+* Use `f['Sv2'].dims[0][0][0]` to access the attached dimension scale
 
 
 ## TO-DO
-* 
+* Fix the python script for getting Sv properly calibrated
+* Check if decimated power (envelope?) series give the same statistics as the original time series
+* Need to take care of the divided by zero warning for TVG
+
+## RESOURCES
+* Raw data:
+	* [80m site benthic experiment pacakge](https://rawdata.oceanobservatories.org/files/CE02SHBP/MJ01C/ZPLSCB101_10.33.13.7/)
+	* [600m site shallow water profiler](https://rawdata.oceanobservatories.org/files/CE04OSPS/PC01B/ZPLSCB102_10.33.10.143/)
+* [timing and memory profiling](http://pynash.org/2013/03/06/timing-and-profiling/)
+* python [image tutorial](http://matplotlib.org/users/image_tutorial.html)
