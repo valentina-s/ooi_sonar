@@ -62,11 +62,14 @@ def unpack_raw_to_h5(fname,h5_fname,deci_len=[]):
         deci_len   number of pings to skip over,
                    default=[], i.e., no skipping
     '''
-    # unpack data
+    # Unpack data
     particle_data, data_times, power_data_dict, freq, bin_size, config_header, config_transducer = \
         parse_echogram_file(fname)
 
-    # convert from power to Sv
+    # Open hdf5 file
+    f = h5py.File(h5_fname,"a")
+
+    # Convert from power to Sv
     cal_params = get_cal_params(power_data_dict,particle_data,config_header,config_transducer)
     Sv = power2Sv(power_data_dict,cal_params)  # convert from power to Sv
     Sv_mtx = get_data_mtx(Sv,freq)
@@ -77,18 +80,25 @@ def unpack_raw_to_h5(fname,h5_fname,deci_len=[]):
 
     sz = Sv_mtx.shape
 
-    # write to hdf5 file
-    f = h5py.File(h5_fname,"a")
-    if "Sv" in f:  # if file alread contains Sv mtx
-        print 'append new data mtx'
-        # append new data
-        sz_exist = f['Sv'].shape  # shape of existing Sv mtx
-        f['Sv'].resize((sz_exist[0],sz_exist[1],sz_exist[2]+sz[2]))
-        f['Sv'][:,:,sz_exist[2]:] = Sv_mtx
-        f['data_times'].resize((sz_exist[2]+sz[2],))
-        f['data_times'][sz_exist[2]:] = data_times
+    # Write to hdf5 file
+    if "Sv" in f:  # if file alread exist and contains Sv mtx
+        # Check if start time of this file is before last time point of last file
+        # Is yes, discard current file and break out from function
+        time_diff = datetime.timedelta(data_times[0]-f['data_times'][-1])
+        hr_diff = (time_diff.days*86400+time_diff.seconds)/3600
+        if hr_diff<0:
+            print 'New file time bad'
+            return
+        else:
+            print 'H5 file exists, append new data mtx...'
+            # append new data
+            sz_exist = f['Sv'].shape  # shape of existing Sv mtx
+            f['Sv'].resize((sz_exist[0],sz_exist[1],sz_exist[2]+sz[2]))
+            f['Sv'][:,:,sz_exist[2]:] = Sv_mtx
+            f['data_times'].resize((sz_exist[2]+sz[2],))
+            f['data_times'][sz_exist[2]:] = data_times
     else:
-        print 'create new dataset'
+        print 'New H5 file, create new dataset...'
         # create dataset and save Sv
         f.create_dataset("Sv", sz, maxshape=(sz[0],sz[1],None), data=Sv_mtx, chunks=True)
         f.create_dataset("data_times", (sz[2],), maxshape=(None,), data=data_times, chunks=True)

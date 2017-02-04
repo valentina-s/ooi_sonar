@@ -50,9 +50,10 @@
 
 
 ## 2017/02/03
-* PCA, ICA, NMF
-* scikit learn decomposition: http://scikit-learn.org/stable/modules/decomposition.html
-* GIL **"lock"**
+* Discussion with Valentina on analysis:
+	* PCA, ICA, NMF
+	* scikit learn decomposition [tutorial](http://scikit-learn.org/stable/modules/decomposition.html)
+	* GIL **"lock"**
 
 
 ## TO-DO
