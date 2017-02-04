@@ -49,6 +49,12 @@
 * Use `f['Sv2'].dims[0][0][0]` to access the attached dimension scale
 
 
+## 2017/02/03
+* PCA, ICA, NMF
+* scikit learn decomposition: http://scikit-learn.org/stable/modules/decomposition.html
+* GIL **"lock"**
+
+
 ## TO-DO
 * Fix the python script for getting Sv properly calibrated
 * Check if decimated power (envelope?) series give the same statistics as the original time series
