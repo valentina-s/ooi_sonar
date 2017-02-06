@@ -21,13 +21,13 @@ for month in np.arange(12)+1:
                              datetime.date(year_want,month,daynum).strftime('%Y%m%d')])
 
 # 80m site
-data_path = '/Volumes/wjlee_apl_2/ooi_zplsc_600m/'
-# SITE_CODE = 'CE02SHBP'
-SITE_CODE = 'CE04OSPS';
+data_path = '/Volumes/wjlee_apl_2/ooi_zplsc_80m/'
+SITE_CODE = 'CE02SHBP'
+# SITE_CODE = 'CE04OSPS';
 fname_form = 'OOI-D*.raw'  # index all files in 2015
 fname_all = glob.glob(os.path.join(data_path,fname_form))
 
-for month in np.arange(5,12):
+for month in np.arange(7,12):
     idx_date = get_date_idx(month_first_last[month],fname_all)
     h5_fname = os.path.join('/Volumes/wjlee_apl_2/ooi_zplsc_h5_figs',
                 SITE_CODE+'_'+datetime.date(year_want,month+1,1).strftime('%Y%m')+'.h5')

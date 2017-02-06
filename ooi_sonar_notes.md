@@ -55,11 +55,15 @@
 	* scikit learn decomposition [tutorial](http://scikit-learn.org/stable/modules/decomposition.html)
 	* GIL **"lock"**
 
+## 2017/02/04-05
+* Code to index `data_times` and `Sv` of specific times
+* Found out the first ping of each day seems to have smaller amplitude than the rest of the day. NEED TO FIGURE OUT WHY!!!
+
 
 ## TO-DO
-* Fix the python script for getting Sv properly calibrated
 * Check if decimated power (envelope?) series give the same statistics as the original time series
 * Need to take care of the divided by zero warning for TVG
+* Need to unpack data 2016/07/26-31
 
 ## RESOURCES
 * Raw data:
