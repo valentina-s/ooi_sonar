@@ -71,3 +71,6 @@
 	* [600m site shallow water profiler](https://rawdata.oceanobservatories.org/files/CE04OSPS/PC01B/ZPLSCB102_10.33.10.143/)
 * [timing and memory profiling](http://pynash.org/2013/03/06/timing-and-profiling/)
 * python [image tutorial](http://matplotlib.org/users/image_tutorial.html)
+
+## REFERENCES
+* Recent paper about krill Sv38 and Sv120 ratio: [Volume backscattering strength of ice krill (Euphausia crystallorophias) in the Amundsen Sea coastal polynya](http://www.sciencedirect.com/science/article/pii/S0967064515002106)
