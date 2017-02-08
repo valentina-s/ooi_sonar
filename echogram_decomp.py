@@ -4,13 +4,15 @@
 Echogram decomposition
 '''
 
-import os, sys
+import os, sys, re
 import h5py
 import datetime
 import math
+import numpy as np
 from matplotlib.dates import date2num, num2date
 import matplotlib.pylab as plt
 from modest_image import imshow
+from calendar import monthrange
 
 data_path = '/Volumes/wjlee_apl_2/ooi_zplsc_h5_figs'
 h5_fname = 'CE04OSPS_201509.h5'
@@ -27,7 +29,7 @@ _,daynum = monthrange(year,month)
 # Get datetime object for on the hour every hour in all days in the month
 all_day = range(1,daynum+1)  # list of all days
 all_hr = range(24)  # list of all hour: 0-23
-all_minutes = range(10)  # list of all minutes: 0-9
+all_minutes = range(1,11)  # list of all minutes: 0-9
 every_hr = [datetime.datetime(year,month,day,hr,minutes,0) \
             for day in all_day for hr in all_hr for minutes in all_minutes]
 
@@ -43,3 +45,12 @@ def find_nearest_time_idx(all_timestamp_num,time_wanted):
 
 # Get f['data_times'] idx for every hour in all days in the month
 all_idx = [find_nearest_time_idx(f['data_times'],hr) for hr in every_hr]
+
+# Extract Sv and timing data
+Sv_mtx = f['Sv'][:,:,all_idx]
+data_times = f['data_times'][all_idx]
+
+# Manipulate Sv data into 1 column for each day
+vec_len_each_day = len(all_hr)*len(all_minutes)*Sv_mtx.shape[1]  # length of vector for 1 day
+Sv_mtx_rshp = [np.transpose(Sv_mtx[band,:,:]),(-1,vec_len_each_day)) for band in range(3)]
+Sv_mtx_rshp = np.asarray(Sv_mtx_rshp)  # convert from list to numpy array
