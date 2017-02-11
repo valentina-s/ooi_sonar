@@ -74,10 +74,11 @@
 * Raw data:
 	* [80m site benthic experiment pacakge](https://rawdata.oceanobservatories.org/files/CE02SHBP/MJ01C/ZPLSCB101_10.33.13.7/)
 	* [600m site shallow water profiler](https://rawdata.oceanobservatories.org/files/CE04OSPS/PC01B/ZPLSCB102_10.33.10.143/)
-* [timing and memory profiling](http://pynash.org/2013/03/06/timing-and-profiling/)
 * Python:
+	* [timing and memory profiling](http://pynash.org/2013/03/06/timing-and-profiling/)
 	* [image tutorial](http://matplotlib.org/users/image_tutorial.html)
 	* [matplotlib subplots](http://matplotlib.org/examples/pylab_examples/subplots_demo.html)
+        * [Extracting and Enriching Ocean Biogeographic Information System (OBIS) Data with R](https://ropensci.org/blog/blog/2017/01/25/obis)
 * Scikit learn decomposition:
 	* [2.5. Decomposing signals in components (matrix factorization problems)](http://scikit-learn.org/stable/modules/decomposition.html)
 	* [Practical Guide to Principal Component Analysis (PCA) in R & Python](https://www.analyticsvidhya.com/blog/2016/03/practical-guide-principal-component-analysis-python/)
@@ -91,4 +92,8 @@
 	* then connect using `https://YOUR_IP:PORT/`
 	* also tried [this](https://coderwall.com/p/ohk6cg/remote-access-to-ipython-notebooks-via-ssh) but didn't work
 	* Note the self-generated SSL **won't work with Safari** but is fine with other browsers
-* 
+
+
+## REFERENCES
+* Recent paper about krill Sv38 and Sv120 ratio: [Volume backscattering strength of ice krill (Euphausia crystallorophias) in the Amundsen Sea coastal polynya](http://www.sciencedirect.com/science/article/pii/S0967064515002106)
+
