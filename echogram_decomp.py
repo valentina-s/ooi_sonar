@@ -95,15 +95,15 @@ def plot_decomp_v(v_comps,save_path,plot_params):
                 ax_v[comp,ff].set_ylabel('Depth',fontsize=14)
                 if comp==v_comps.shape[0]-1:
                     ax_v[comp,ff].set_xlabel('Time of day',fontsize=14)
+                elif comp==0:
+                    if ff==0:
+                        ax_v[comp,ff].set_title('38 kHz',fontsize=16)
+                    elif ff==1:
+                        ax_v[comp,ff].set_title('120 kHz',fontsize=16)
+                    elif ff==2:
+                        ax_v[comp,ff].set_title('200 kHz',fontsize=16)
                 if ff==0:
                     ax_v[comp,ff].set_ylabel('Depth',fontsize=14)
-                    if comp==0:
-                        if ff==0:
-                            ax_v[comp,ff].set_title('38 kHz',fontsize=16)
-                        elif ff==1:
-                            ax_v[comp,ff].set_title('120 kHz',fontsize=16)
-                        elif ff==2:
-                            ax_v[comp,ff].set_title('200 kHz',fontsize=16)
         fig_v.set_figwidth(16)
         fig_v.set_figheight(10)
     save_fname = '%s%02d_%dcomps_vec.png' % (plot_params['year'],plot_params['month'],v_comps.shape[0])

@@ -51,3 +51,19 @@ time_tick = np.linspace(0,pings_per_day,5)
 time_label = ['%02d:00' % x for x in np.arange(0,24,6)]
 plot_params = dict(zip(['year','month','depth_label','time_label','depth_tick','time_tick'],\
                         [year,month,depth_label,time_label,depth_tick,time_tick]))
+
+# Decomposition using 3 freq
+Sv_vec_3freq=reshape_into_3freq(Sv_mtx,vec_len_each_day)
+nmf_3freq = decomposition.NMF(n_components=6)
+nmf_3freq.fit(Sv_vec_3freq-Sv_vec_3freq.min())
+Sv_vec_3freq_r_nmf = nmf_3freq.transform(Sv_vec_3freq-Sv_vec_3freq.min())  # tranformation
+nmf_3freq_comps = sep_into_freq(nmf_3freq.components_,pings_per_day,depth_bin_num)  # get nmf components
+plot_decomp_v(nmf_3freq_comps,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params)
+plot_decomp_transform(Sv_vec_3freq_r_nmf,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params)
+
+nmf_38k = decomposition.NMF(n_components=6)
+nmf_38k.fit(Sv_vec_38k-Sv_vec_38k.min())
+Sv_vec_38k_r_nmf = nmf_38k.transform(Sv_vec_38k-Sv_vec_38k.min())  # tranformation
+nmf_38k_comps = sep_into_freq(nmf_38k.components_,pings_per_day,depth_bin_num)  # get nmf components
+plot_decomp_v(nmf_38k_comps,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params)
+plot_decomp_transform(Sv_vec_38k_r_nmf,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,38)
