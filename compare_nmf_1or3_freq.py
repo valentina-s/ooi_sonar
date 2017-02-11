@@ -12,7 +12,8 @@ from sklearn import decomposition
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-data_path = '/Volumes/wjlee_apl_2/ooi_zplsc_h5_figs'  # path to folder with all data
+data_path = '~/internal_2tb/ooi_sonar/ooi_zplsc_h5_figs'  # path to folder with all data
+save_path = '~/internal_2tb/ooi_sonar/analysis_figs'
 h5_fname = 'CE04OSPS_201509.h5'  # file to analyze
 f = h5py.File(os.path.join(data_path,h5_fname),'r')
 
@@ -58,29 +59,29 @@ nmf_3freq = decomposition.NMF(n_components=6)
 nmf_3freq.fit(Sv_vec_3freq-Sv_vec_3freq.min())
 Sv_vec_3freq_r_nmf = nmf_3freq.transform(Sv_vec_3freq-Sv_vec_3freq.min())  # tranformation
 nmf_3freq_comps = sep_into_freq(nmf_3freq.components_,pings_per_day,depth_bin_num)  # get nmf components
-plot_decomp_v(nmf_3freq_comps,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params)
-plot_decomp_transform(Sv_vec_3freq_r_nmf,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params)
+plot_decomp_v(nmf_3freq_comps,save_path,plot_params)
+plot_decomp_transform(Sv_vec_3freq_r_nmf,save_path,plot_params)
 
 Sv_vec_38k=reshape_into_1freq(Sv_mtx,vec_len_each_day,0)
 nmf_38k = decomposition.NMF(n_components=6)
 nmf_38k.fit(Sv_vec_38k-Sv_vec_38k.min())
 Sv_vec_38k_r_nmf = nmf_38k.transform(Sv_vec_38k-Sv_vec_38k.min())  # tranformation
 nmf_38k_comps = sep_into_freq(nmf_38k.components_,pings_per_day,depth_bin_num)  # get nmf components
-plot_decomp_v(nmf_38k_comps,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,38)
-plot_decomp_transform(Sv_vec_38k_r_nmf,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,38)
+plot_decomp_v(nmf_38k_comps,save_path,plot_params,38)
+plot_decomp_transform(Sv_vec_38k_r_nmf,save_path,plot_params,38)
 
 Sv_vec_120k=reshape_into_1freq(Sv_mtx,vec_len_each_day,1)
 nmf_120k = decomposition.NMF(n_components=6)
 nmf_120k.fit(Sv_vec_120k-Sv_vec_120k.min())
 Sv_vec_120k_r_nmf = nmf_120k.transform(Sv_vec_120k-Sv_vec_120k.min())  # tranformation
 nmf_120k_comps = sep_into_freq(nmf_120k.components_,pings_per_day,depth_bin_num)  # get nmf components
-plot_decomp_v(nmf_120k_comps,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,120)
-plot_decomp_transform(Sv_vec_120k_r_nmf,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,120)
+plot_decomp_v(nmf_120k_comps,save_path,plot_params,120)
+plot_decomp_transform(Sv_vec_120k_r_nmf,save_path,plot_params,120)
 
 Sv_vec_200k=reshape_into_1freq(Sv_mtx,vec_len_each_day,2)
 nmf_200k = decomposition.NMF(n_components=6)
 nmf_200k.fit(Sv_vec_200k-Sv_vec_200k.min())
 Sv_vec_200k_r_nmf = nmf_200k.transform(Sv_vec_200k-Sv_vec_200k.min())  # tranformation
 nmf_200k_comps = sep_into_freq(nmf_200k.components_,pings_per_day,depth_bin_num)  # get nmf components
-plot_decomp_v(nmf_200k_comps,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,120)
-plot_decomp_transform(Sv_vec_200k_r_nmf,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,120)
+plot_decomp_v(nmf_200k_comps,save_path,plot_params,120)
+plot_decomp_transform(Sv_vec_200k_r_nmf,save_path,plot_params,120)
