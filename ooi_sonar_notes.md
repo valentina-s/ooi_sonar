@@ -57,17 +57,38 @@
 
 ## 2017/02/04-05
 * Code to index `data_times` and `Sv` of specific times
-* Found out the first ping of each day seems to have smaller amplitude than the rest of the day. NEED TO FIGURE OUT WHY!!!
+* Found out the first ping of each day seems to have smaller amplitude than the rest of the day. **[CONFIRM THIS WITH SKIP]**
+
+## 2017/02/07
+* Get PCA, ICA, and NMF working for sonar data
+* Spent lot of time figuring out how to use `numpy.reshape()`. It's not very intuitive in that the elements are taken to fill the *last* instead of the *first* dimension of the array.
+* 
 
 
 ## TO-DO
 * Check if decimated power (envelope?) series give the same statistics as the original time series
 * Need to take care of the divided by zero warning for TVG
-* Need to unpack data 2016/07/26-31
+* Need to figure out a routine to plot colorbar and timestamp.
 
 ## RESOURCES
 * Raw data:
 	* [80m site benthic experiment pacakge](https://rawdata.oceanobservatories.org/files/CE02SHBP/MJ01C/ZPLSCB101_10.33.13.7/)
 	* [600m site shallow water profiler](https://rawdata.oceanobservatories.org/files/CE04OSPS/PC01B/ZPLSCB102_10.33.10.143/)
 * [timing and memory profiling](http://pynash.org/2013/03/06/timing-and-profiling/)
-* python [image tutorial](http://matplotlib.org/users/image_tutorial.html)
+* Python:
+	* [image tutorial](http://matplotlib.org/users/image_tutorial.html)
+	* [matplotlib subplots](http://matplotlib.org/examples/pylab_examples/subplots_demo.html)
+* Scikit learn decomposition:
+	* [2.5. Decomposing signals in components (matrix factorization problems)](http://scikit-learn.org/stable/modules/decomposition.html)
+	* [Practical Guide to Principal Component Analysis (PCA) in R & Python](https://www.analyticsvidhya.com/blog/2016/03/practical-guide-principal-component-analysis-python/)
+* Principal Component Pursuit algorithm [python implementation](https://github.com/dfm/pcp)
+* Running ipython notebook on remote machine:
+	* first set up a public server on remote machine using [these steps](http://jupyter-notebook.readthedocs.io/en/latest/public_server.html):
+		* Prerequisite: A notebook configuration file
+		* Preparing a hashed password
+		* Using SSL for encrypted communication
+		* Running a public notebook server
+	* then connect using `https://YOUR_IP:PORT/`
+	* also tried [this](https://coderwall.com/p/ohk6cg/remote-access-to-ipython-notebooks-via-ssh) but didn't work
+	* Note the self-generated SSL **won't work with Safari** but is fine with other browsers
+* 
