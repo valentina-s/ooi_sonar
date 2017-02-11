@@ -22,10 +22,15 @@ def find_nearest_time_idx(all_timestamp_num,time_wanted):
     idx = np.searchsorted(all_timestamp_num, time_wanted_num, side="left")
     if idx > 0 and (idx == len(all_timestamp_num) or \
         math.fabs(time_wanted_num - all_timestamp_num[idx-1]) < math.fabs(time_wanted_num - all_timestamp_num[idx])):
-        return idx-1
+        idx -= 1
+
+    # If interval between the selected index and time wanted > 2 seconds
+    sec_diff = datetime.timedelta(all_timestamp_num[idx-1]-time_wanted_num).total_seconds()
+    if math.fabs(sec_diff)>2:
+        return np.nan
     else:
         return idx
-
+    
 
 def reshape_into_3freq(mtx,vec_len):
     ''' Manipulate 3 freq Sv data into 1 long vector for each day '''
