@@ -3,6 +3,18 @@
 '''
 Echogram decomposition
 '''
+import os, sys, re
+import h5py
+import datetime
+import math
+import numpy as np
+from matplotlib.dates import date2num, num2date
+from calendar import monthrange
+import matplotlib.pyplot as plt
+from modest_image import imshow
+from sklearn import decomposition
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
 
 def find_nearest_time_idx(all_timestamp_num,time_wanted):
     ''' Function to find nearest element '''
