@@ -33,7 +33,7 @@ def reshape_into_3freq(mtx,vec_len):
     # convert from list to numpy array, dim: (3, 30 or 31, vec_len_each_day))
     long_vec_3freq = np.asarray(long_vec_3freq)
     # Swal dim 0 and 1 and reshape triple long vector for each day
-    return np.reshape(np.swapaxes(long_vec_3freq,0,1),(-1,3*vec_len_each_day))
+    return np.reshape(np.swapaxes(long_vec_3freq,0,1),(-1,3*vec_len))
 
 
 def reshape_into_1freq(mtx,vec_len,fidx):
