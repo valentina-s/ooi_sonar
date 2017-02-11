@@ -61,9 +61,26 @@ nmf_3freq_comps = sep_into_freq(nmf_3freq.components_,pings_per_day,depth_bin_nu
 plot_decomp_v(nmf_3freq_comps,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params)
 plot_decomp_transform(Sv_vec_3freq_r_nmf,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params)
 
+Sv_vec_38k=reshape_into_1freq(Sv_mtx,vec_len_each_day,0)
 nmf_38k = decomposition.NMF(n_components=6)
 nmf_38k.fit(Sv_vec_38k-Sv_vec_38k.min())
 Sv_vec_38k_r_nmf = nmf_38k.transform(Sv_vec_38k-Sv_vec_38k.min())  # tranformation
 nmf_38k_comps = sep_into_freq(nmf_38k.components_,pings_per_day,depth_bin_num)  # get nmf components
-plot_decomp_v(nmf_38k_comps,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params)
+plot_decomp_v(nmf_38k_comps,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,38)
 plot_decomp_transform(Sv_vec_38k_r_nmf,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,38)
+
+Sv_vec_120k=reshape_into_1freq(Sv_mtx,vec_len_each_day,1)
+nmf_120k = decomposition.NMF(n_components=6)
+nmf_120k.fit(Sv_vec_120k-Sv_vec_120k.min())
+Sv_vec_120k_r_nmf = nmf_120k.transform(Sv_vec_120k-Sv_vec_120k.min())  # tranformation
+nmf_120k_comps = sep_into_freq(nmf_120k.components_,pings_per_day,depth_bin_num)  # get nmf components
+plot_decomp_v(nmf_120k_comps,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,120)
+plot_decomp_transform(Sv_vec_120k_r_nmf,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,120)
+
+Sv_vec_200k=reshape_into_1freq(Sv_mtx,vec_len_each_day,2)
+nmf_200k = decomposition.NMF(n_components=6)
+nmf_200k.fit(Sv_vec_200k-Sv_vec_200k.min())
+Sv_vec_200k_r_nmf = nmf_200k.transform(Sv_vec_200k-Sv_vec_200k.min())  # tranformation
+nmf_200k_comps = sep_into_freq(nmf_200k.components_,pings_per_day,depth_bin_num)  # get nmf components
+plot_decomp_v(nmf_200k_comps,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,120)
+plot_decomp_transform(Sv_vec_200k_r_nmf,'/home/wu-jung/internal_2tb/ooi_sonar',plot_params,120)

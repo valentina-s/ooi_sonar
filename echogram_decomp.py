@@ -60,7 +60,7 @@ def sep_into_freq(v_comps,pings_per_day,depth_bin_num):
         return []
 
 
-def plot_decomp_v(v_comps,save_path,plot_params):
+def plot_decomp_v(v_comps,save_path,plot_params,freq='all'):
     ''' Plot each components of the decomposition '''
     # 1 freq results
     if v_comps.ndim==3:
@@ -77,6 +77,8 @@ def plot_decomp_v(v_comps,save_path,plot_params):
             ax_v[comp].set_ylabel('Depth',fontsize=14)
             if comp==v_comps.shape[0]-1:
                 ax_v[comp].set_xlabel('Time of day',fontsize=14)
+            elif comp==0:
+                ax_v[comp].set_title('%s kHz' % freq, fontsize=16)
         fig_v.set_figwidth(5)
         fig_v.set_figheight(10)
     # 3 freq results
@@ -106,7 +108,7 @@ def plot_decomp_v(v_comps,save_path,plot_params):
                     ax_v[comp,ff].set_ylabel('Depth',fontsize=14)
         fig_v.set_figwidth(16)
         fig_v.set_figheight(10)
-    save_fname = '%s%02d_%dcomps_vec.png' % (plot_params['year'],plot_params['month'],v_comps.shape[0])
+    save_fname = '%s%02d_%s_%dcomps_vec.png' % (plot_params['year'],plot_params['month'],str(freq),v_comps.shape[0])
     plt.savefig(os.path.join(save_path,save_fname))
 
 
@@ -117,5 +119,5 @@ def plot_decomp_transform(r_mtx,save_path,plot_params,freq='all'):
     plt.ylabel('Day of month')
     plt.colorbar()
     plt.title(str(freq)+' kHz, %d components' % r_mtx.shape[1],fontsize=16)
-    save_fname = '%d_%02d_%dcomps_transformed.png' % (plot_params['year'],plot_params['month'],r_mtx.shape[1])
+    save_fname = '%d%02d_%s_%dcomps_tfm.png' % (plot_params['year'],plot_params['month'],str(freq),r_mtx.shape[1])
     plt.savefig(os.path.join(save_path,save_fname))
