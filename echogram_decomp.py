@@ -4,60 +4,6 @@
 Echogram decomposition
 '''
 
-import os, sys, re
-import h5py
-import datetime
-import math
-import numpy as np
-from matplotlib.dates import date2num, num2date
-from calendar import monthrange
-import matplotlib.pyplot as plt
-from modest_image import imshow
-from sklearn import decomposition
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-
-
-data_path = '/Volumes/wjlee_apl_2/ooi_zplsc_h5_figs'  # path to folder with all data
-h5_fname = 'CE04OSPS_201509.h5'  # file to analyze
-f = h5py.File(os.path.join(data_path,h5_fname),'r')
-
-# Get month and day range
-H5_FILENAME_MATCHER = re.compile('(?P<SITE_CODE>\S*)_(?P<YearMonth>\S*)\.\S*')
-ym = datetime.datetime.strptime(H5_FILENAME_MATCHER.match(h5_fname).group('YearMonth'),'%Y%m')
-year = ym.year
-month = ym.month
-_,daynum = monthrange(year,month)
-
-# Get datetime object for on the hour every hour in all days in the month
-all_day = range(1,daynum+1)  # list of all days
-all_hr = range(24)  # list of all hour: 0-23
-all_minutes = range(1,11)  # list of all minutes: 0-9
-every_hr = [datetime.datetime(year,month,day,hr,minutes,0) \
-            for day in all_day for hr in all_hr for minutes in all_minutes]
-pings_per_day = len(all_hr)*len(all_minutes)
-
-# Get f['data_times'] idx for every hour in all days in the month
-all_idx = [find_nearest_time_idx(f['data_times'],hr) for hr in every_hr]
-
-# Extract Sv and timing data
-Sv_mtx = f['Sv'][:,:,all_idx]
-data_times = f['data_times'][all_idx]
-
-# Params of Sv data
-bin_size = f['bin_size'][0]      # size of each depth bin
-depth_bin_num = Sv_mtx.shape[1]  # number of depth bins
-max_depth = np.round(Sv_mtx.shape[1]*bin_size)
-vec_len_each_day = len(all_hr)*len(all_minutes)*depth_bin_num  # length of vector for 1 day
-
-# Get time and depth stamps
-depth_tick = np.linspace(0,depth_bin_num,5)
-depth_label = ['%d' % d for d in np.linspace(0,max_depth,5)]
-time_tick = np.linspace(0,pings_per_day,5)
-time_label = ['%02d:00' % x for x in np.arange(0,24,6)]
-plot_params = dict(zip(['year','month','depth_label','time_label','depth_tick','time_tick'],\
-                        [year,month,depth_label,time_label,depth_tick,time_tick]))
-
-
 def find_nearest_time_idx(all_timestamp_num,time_wanted):
     ''' Function to find nearest element '''
     time_wanted_num = date2num(time_wanted)
