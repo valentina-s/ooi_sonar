@@ -67,7 +67,8 @@ for ii in nanidx[0]:
         univ_idx[ii] = univ_idx[ii-1]
 
 mask = np.ones(len(univ_idx), dtype=bool)
-mask[idx_to_delete] = False
+if idx_to_delete:
+    mask[idx_to_delete] = False
 univ_idx = univ_idx[mask]
 
 # Params of Sv data
@@ -76,19 +77,6 @@ depth_bin_num = Sv_mtx.shape[1]  # number of depth bins
 max_depth = np.round(Sv_mtx.shape[1]*bin_size)
 vec_len_each_day = pings_per_day_tmp*depth_bin_num  # length of vector for 1 day
 
-# Reshape array and perform NMF
-Sv_vec_3freq = reshape_into_3freq(Sv_mtx[:,:,univ_idx],vec_len_each_day)
-
-nmf_3freq = decomposition.NMF(n_components=6)
-nmf_3freq.fit(Sv_vec_3freq-Sv_vec_3freq.min())
-Sv_vec_3freq_r_nmf = nmf_3freq.transform(Sv_vec_3freq-Sv_vec_3freq.min())  # tranformation 
-nmf_3freq_comps = sep_into_freq(nmf_3freq.components_,pings_per_day,depth_bin_num)  # get nmf components
-
-plot_decomp_v(nmf_3freq_comps,save_path,plot_params)
-
-plot_decomp_transform(Sv_vec_3freq_r_nmf,save_path,plot_params)
-
-
 # Get time and depth stamps
 depth_tick = np.linspace(0,depth_bin_num,5)
 depth_label = ['%d' % d for d in np.linspace(0,max_depth,5)]
@@ -96,6 +84,17 @@ time_tick = np.linspace(0,pings_per_day,5)
 time_label = ['%02d:00' % x for x in np.arange(0,24,6)]
 plot_params = dict(zip(['year','month','depth_label','time_label','depth_tick','time_tick'],\
                         [2015,8,depth_label,time_label,depth_tick,time_tick]))
+
+# Reshape array and perform NMF
+Sv_vec_3freq = reshape_into_3freq(Sv_mtx[:,:,univ_idx],vec_len_each_day)
+nmf_3freq = decomposition.NMF(n_components=6)
+nmf_3freq.fit(Sv_vec_3freq-Sv_vec_3freq.min())
+Sv_vec_3freq_r_nmf = nmf_3freq.transform(Sv_vec_3freq-Sv_vec_3freq.min())  # tranformation 
+nmf_3freq_comps = sep_into_freq(nmf_3freq.components_,pings_per_day,depth_bin_num)  # get nmf components
+
+# Plot NMF results
+plot_decomp_v(nmf_3freq_comps,save_path,plot_params)
+plot_decomp_transform(Sv_vec_3freq_r_nmf,save_path,plot_params)
 
 
 def get_num_days_pings(h5_fname):
@@ -146,13 +145,6 @@ def get_data_from_h5(data_path,h5_fname):
     for day in range(len(num_nan_of_day)):
         if num_nan_of_day[day]>5:
             all_idx_rshp[day,:] = np.nan
-        elif num_nan_of_day[day]<5 and num_nan_of_day[day]!=0:
-            nanidx = np.where(np.isnan(all_idx_rshp[day,:]))
-    #        for ii in nanidx[0]:
-    #            if ii==0:
-    #                all_idx_rshp[day,ii] = all_idx_rshp[day,ii+1]
-    #            else:
-    #                all_idx_rshp[day,ii] = all_idx_rshp[day,ii-1]
     all_idx = np.reshape(all_idx_rshp,-1)
 
     # Extract timing and Sv data
@@ -169,48 +161,3 @@ def get_data_from_h5(data_path,h5_fname):
     return Sv_mtx,data_times,bin_size,pings_per_day,all_idx
 
 
-# Params of Sv data
-depth_bin_num = Sv_mtx.shape[1]  # number of depth bins
-max_depth = np.round(Sv_mtx.shape[1]*bin_size)
-vec_len_each_day = len(all_hr)*len(all_minutes)*depth_bin_num  # length of vector for 1 day
-
-# Get time and depth stamps
-depth_tick = np.linspace(0,depth_bin_num,5)
-depth_label = ['%d' % d for d in np.linspace(0,max_depth,5)]
-time_tick = np.linspace(0,pings_per_day,5)
-time_label = ['%02d:00' % x for x in np.arange(0,24,6)]
-plot_params = dict(zip(['year','month','depth_label','time_label','depth_tick','time_tick'],\
-                        [year,month,depth_label,time_label,depth_tick,time_tick]))
-
-# Decomposition using 3 freq
-Sv_vec_3freq=reshape_into_3freq(Sv_mtx,vec_len_each_day)
-nmf_3freq = decomposition.NMF(n_components=6)
-nmf_3freq.fit(Sv_vec_3freq-Sv_vec_3freq.min())
-Sv_vec_3freq_r_nmf = nmf_3freq.transform(Sv_vec_3freq-Sv_vec_3freq.min())  # tranformation
-nmf_3freq_comps = sep_into_freq(nmf_3freq.components_,pings_per_day,depth_bin_num)  # get nmf components
-plot_decomp_v(nmf_3freq_comps,save_path,plot_params)
-plot_decomp_transform(Sv_vec_3freq_r_nmf,save_path,plot_params)
-
-Sv_vec_38k=reshape_into_1freq(Sv_mtx,vec_len_each_day,0)
-nmf_38k = decomposition.NMF(n_components=6)
-nmf_38k.fit(Sv_vec_38k-Sv_vec_38k.min())
-Sv_vec_38k_r_nmf = nmf_38k.transform(Sv_vec_38k-Sv_vec_38k.min())  # tranformation
-nmf_38k_comps = sep_into_freq(nmf_38k.components_,pings_per_day,depth_bin_num)  # get nmf components
-plot_decomp_v(nmf_38k_comps,save_path,plot_params,38)
-plot_decomp_transform(Sv_vec_38k_r_nmf,save_path,plot_params,38)
-
-Sv_vec_120k=reshape_into_1freq(Sv_mtx,vec_len_each_day,1)
-nmf_120k = decomposition.NMF(n_components=6)
-nmf_120k.fit(Sv_vec_120k-Sv_vec_120k.min())
-Sv_vec_120k_r_nmf = nmf_120k.transform(Sv_vec_120k-Sv_vec_120k.min())  # tranformation
-nmf_120k_comps = sep_into_freq(nmf_120k.components_,pings_per_day,depth_bin_num)  # get nmf components
-plot_decomp_v(nmf_120k_comps,save_path,plot_params,120)
-plot_decomp_transform(Sv_vec_120k_r_nmf,save_path,plot_params,120)
-
-Sv_vec_200k=reshape_into_1freq(Sv_mtx,vec_len_each_day,2)
-nmf_200k = decomposition.NMF(n_components=6)
-nmf_200k.fit(Sv_vec_200k-Sv_vec_200k.min())
-Sv_vec_200k_r_nmf = nmf_200k.transform(Sv_vec_200k-Sv_vec_200k.min())  # tranformation
-nmf_200k_comps = sep_into_freq(nmf_200k.components_,pings_per_day,depth_bin_num)  # get nmf components
-plot_decomp_v(nmf_200k_comps,save_path,plot_params,120)
-plot_decomp_transform(Sv_vec_200k_r_nmf,save_path,plot_params,120)

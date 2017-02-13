@@ -25,8 +25,8 @@ def find_nearest_time_idx(all_timestamp_num,time_wanted):
         idx -= 1
 
     # If interval between the selected index and time wanted > 2 seconds
-    sec_diff = datetime.timedelta(all_timestamp_num[idx-1]-time_wanted_num).total_seconds()
-    if math.fabs(sec_diff)>2:
+    sec_diff = datetime.timedelta(all_timestamp_num[idx]-time_wanted_num).total_seconds()
+    if math.fabs(sec_diff)>1:
         return np.nan
     else:
         return idx

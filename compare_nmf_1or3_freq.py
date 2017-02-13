@@ -34,10 +34,15 @@ pings_per_day = len(all_hr)*len(all_minutes)
 
 # Get f['data_times'] idx for every hour in all days in the month
 all_idx = [find_nearest_time_idx(f['data_times'],hr) for hr in every_hr]
+all_idx = np.array(all_idx)
+notnanidx = np.int_(all_idx[~np.isnan(all_idx)])
 
 # Extract Sv and timing data
-Sv_mtx = f['Sv'][:,:,all_idx]
-data_times = f['data_times'][all_idx]
+Sv_tmp = f['Sv'][:,:,0]
+Sv_mtx = np.empty((Sv_tmp.shape[0],Sv_tmp.shape[1],all_idx.shape[0]))
+Sv_mtx[:,:,~np.isnan(all_idx)] = f['Sv'][:,:,notnanidx.tolist()]
+data_times = np.empty(all_idx.shape[0])
+data_times[~np.isnan(all_idx)] = f['data_times'][notnanidx.tolist()]
 
 # Params of Sv data
 bin_size = f['bin_size'][0]      # size of each depth bin
@@ -62,7 +67,7 @@ nmf_3freq_comps = sep_into_freq(nmf_3freq.components_,pings_per_day,depth_bin_nu
 plot_decomp_v(nmf_3freq_comps,save_path,plot_params)
 plot_decomp_transform(Sv_vec_3freq_r_nmf,save_path,plot_params)
 
-Sv_vec_38k=reshape_into_1freq(Sv_mtx,vec_len_each_day,0)
+Sv_vec_38k=reshape_into_1freq(Sv_mtx[:,:,univ_idx],vec_len_each_day,0)
 nmf_38k = decomposition.NMF(n_components=6)
 nmf_38k.fit(Sv_vec_38k-Sv_vec_38k.min())
 Sv_vec_38k_r_nmf = nmf_38k.transform(Sv_vec_38k-Sv_vec_38k.min())  # tranformation
@@ -70,7 +75,7 @@ nmf_38k_comps = sep_into_freq(nmf_38k.components_,pings_per_day,depth_bin_num)  
 plot_decomp_v(nmf_38k_comps,save_path,plot_params,38)
 plot_decomp_transform(Sv_vec_38k_r_nmf,save_path,plot_params,38)
 
-Sv_vec_120k=reshape_into_1freq(Sv_mtx,vec_len_each_day,1)
+Sv_vec_120k=reshape_into_1freq(Sv_mtx[:,:,univ_idx],vec_len_each_day,1)
 nmf_120k = decomposition.NMF(n_components=6)
 nmf_120k.fit(Sv_vec_120k-Sv_vec_120k.min())
 Sv_vec_120k_r_nmf = nmf_120k.transform(Sv_vec_120k-Sv_vec_120k.min())  # tranformation
@@ -78,7 +83,7 @@ nmf_120k_comps = sep_into_freq(nmf_120k.components_,pings_per_day,depth_bin_num)
 plot_decomp_v(nmf_120k_comps,save_path,plot_params,120)
 plot_decomp_transform(Sv_vec_120k_r_nmf,save_path,plot_params,120)
 
-Sv_vec_200k=reshape_into_1freq(Sv_mtx,vec_len_each_day,2)
+Sv_vec_200k=reshape_into_1freq(Sv_mtx[:,:,univ_idx],vec_len_each_day,2)
 nmf_200k = decomposition.NMF(n_components=6)
 nmf_200k.fit(Sv_vec_200k-Sv_vec_200k.min())
 Sv_vec_200k_r_nmf = nmf_200k.transform(Sv_vec_200k-Sv_vec_200k.min())  # tranformation
