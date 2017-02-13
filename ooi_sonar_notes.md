@@ -59,10 +59,19 @@
 * Code to index `data_times` and `Sv` of specific times
 * Found out the first ping of each day seems to have smaller amplitude than the rest of the day. **[CONFIRM THIS WITH SKIP]**
 
-## 2017/02/07
+## 2017/02/07-12
 * Get PCA, ICA, and NMF working for sonar data
 * Spent lot of time figuring out how to use `numpy.reshape()`. It's not very intuitive in that the elements are taken to fill the *last* instead of the *first* dimension of the array.
-* 
+* `h5py` doesn't allow duplicated indexing as in `numpy`, see [here](https://github.com/h5py/h5py/issues/8)
+
+## 2017/02/13
+* Comparison of NMF analysis on either single frequencies or all 3 frequencies together for 30 days of data: it seems like the decomposition is more stable using all 3 frequencies together.
+* Also tried NMF analysis on 80 consecutive days of data: it seems like the patterns are a little “washed away” probably due to larger variability across longer time
+* Noticed that the echosounders sometimes skipped pinging at particular instances
+* Questions:
+	* How to deal with missing data? 1 ping vs multiple hours in a day
+	* 
+
 
 
 ## TO-DO
@@ -78,7 +87,8 @@
 	* [timing and memory profiling](http://pynash.org/2013/03/06/timing-and-profiling/)
 	* [image tutorial](http://matplotlib.org/users/image_tutorial.html)
 	* [matplotlib subplots](http://matplotlib.org/examples/pylab_examples/subplots_demo.html)
-        * [Extracting and Enriching Ocean Biogeographic Information System (OBIS) Data with R](https://ropensci.org/blog/blog/2017/01/25/obis)
+	* [colormaps](http://matplotlib.org/users/colormaps.html)
+* [Extracting and Enriching Ocean Biogeographic Information System (OBIS) Data with R](https://ropensci.org/blog/blog/2017/01/25/obis)
 * Scikit learn decomposition:
 	* [2.5. Decomposing signals in components (matrix factorization problems)](http://scikit-learn.org/stable/modules/decomposition.html)
 	* [Practical Guide to Principal Component Analysis (PCA) in R & Python](https://www.analyticsvidhya.com/blog/2016/03/practical-guide-principal-component-analysis-python/)
@@ -96,4 +106,15 @@
 
 ## REFERENCES
 * Recent paper about krill Sv38 and Sv120 ratio: [Volume backscattering strength of ice krill (Euphausia crystallorophias) in the Amundsen Sea coastal polynya](http://www.sciencedirect.com/science/article/pii/S0967064515002106)
+* Correlate backscatteing with oceanographic background changes [Acoustic backscatter observations with implications for seasonal and vertical migrations of zooplankton and nekton in the Amundsen shelf (Antarctica)](http://www.sciencedirect.com/science/article/pii/S0272771414003485)
 
+
+## Misc Python notes
+* the `take` and `put` functions in general have better performance than their fancy indexing equivalents by a significant margin
+* `ravel` does not produce a copy of the underlying data if it does not have to (more on this below). The `flatten` method behaves like ravel except it always returns a copy of the data
+* Broadcasting has better performance than using `repeat`.
+* Broadcasting rule: Two arrays are compatible for broadcasting if for each trailing dimension (that is, starting from the end), the axis lengths match or if either of the lengths is 1. Broadcasting is then performed over the missing and / or length 1 dimensions.
+* `np.newaxes` can be used to add a new axis with length 1 specifically for broadcasting purposes, especially in generic algorithms
+* Use Pandas:
+	* `from pandas import Series, DataFrame`
+	* `import pandas as pd`
