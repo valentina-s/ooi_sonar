@@ -1,5 +1,6 @@
 # OOI Sonar Data Processing Project
 
+############################################
 ## 2017/01/16
 * Found out [Scrapy](https://scrapy.org) is a nice tool for scrapying websites ([tutorial](https://doc.scrapy.org/en/1.3/intro/overview.html)). Seems straightforward to use and make crawling the website tree very easy. Later on when we need to make the developed methods more widely applicable we can consider using this.
 * For now since we just need to download a large chunk of data for exploration, it seems sufficient to just use `wget`.
@@ -13,7 +14,7 @@
 	* `-A acclist`: same as `--accept`; `acclist` can be a list of file suffixes or patterns, can use `*`, `?`, etc.
 * Resource: an [example code](https://github.com/billhowe/ooifetch/blob/master/fetchmovies.py) to look and fetch movies from OOI raw data server.
 
-
+############################################
 ## 2017/01/24
 * `conda info --envs` to see which env is on
 * `conda activate py27` switch to python 2.7 environment
@@ -29,12 +30,14 @@
 * About finding peaks in python: [discussion](https://blog.ytotech.com/2015/11/01/findpeaks-in-python/) and associated [github page](https://github.com/MonsieurV/py-findpeaks)
 * Getting data loaded and echogram plotted using OOI repository code! :)
 
+############################################
 ## 2017/01/26
 * `os.getcwd()` gets current direcotry
 * Indicator function: `[int(x == '20150911') for x in date_list]`
 * map and lambda: `map(lambda x: x.group('Date'),raw_file_times)`
 * ways to iterate over dictionary: `freq = {k: str(int(v/1E3))+'k' for (k,v) in frequencies.items()}  # get frequencies`
 
+############################################
 ## 2017/01/30-02/01
 * Use memory profiler:
 	```
@@ -48,23 +51,27 @@
 * `matplotlib` [subplot demo](http://matplotlib.org/examples/pylab_examples/subplots_demo.html)
 * Use `f['Sv2'].dims[0][0][0]` to access the attached dimension scale
 
-
+############################################
 ## 2017/02/03
 * Discussion with Valentina on analysis:
 	* PCA, ICA, NMF
 	* scikit learn decomposition [tutorial](http://scikit-learn.org/stable/modules/decomposition.html)
 	* GIL **"lock"**
 
+############################################
 ## 2017/02/04-05
 * Code to index `data_times` and `Sv` of specific times
 * Found out the first ping of each day seems to have smaller amplitude than the rest of the day. **[CONFIRM THIS WITH SKIP]**
 
+############################################
 ## 2017/02/07-12
 * Get PCA, ICA, and NMF working for sonar data
 * Spent lot of time figuring out how to use `numpy.reshape()`. It's not very intuitive in that the elements are taken to fill the *last* instead of the *first* dimension of the array.
 * `h5py` doesn't allow duplicated indexing as in `numpy`, see [here](https://github.com/h5py/h5py/issues/8)
 
+############################################
 ## 2017/02/13
+* Set up jupyter noteboook server on the APL machine (see resources below for how-to)
 * Comparison of NMF analysis on either single frequencies or all 3 frequencies together for 30 days of data: it seems like the decomposition is more stable using all 3 frequencies together.
 * Also tried NMF analysis on 80 consecutive days of data: it seems like the patterns are a little “washed away” probably due to larger variability across longer time
 * Noticed that the echosounders sometimes skipped pinging at particular instances
@@ -74,10 +81,12 @@
 
 
 
+
 ## TO-DO
 * Check if decimated power (envelope?) series give the same statistics as the original time series
 * Need to take care of the divided by zero warning for TVG
-* Need to figure out a routine to plot colorbar and timestamp.
+
+
 
 ## RESOURCES
 * Raw data:
@@ -102,6 +111,8 @@
 	* then connect using `https://YOUR_IP:PORT/`
 	* also tried [this](https://coderwall.com/p/ohk6cg/remote-access-to-ipython-notebooks-via-ssh) but didn't work
 	* Note the self-generated SSL **won't work with Safari** but is fine with other browsers
+* Machine learning [next steps](https://www.quora.com/I-have-completed-Andrew-Ngs-Coursera-class-on-Machine-Learning-What-should-I-do-next-What-*can*-I-do-next)
+* [Quick HDF5 with Pandas](http://glowingpython.blogspot.com/2014/08/quick-hdf5-with-pandas.html)
 
 
 ## REFERENCES
