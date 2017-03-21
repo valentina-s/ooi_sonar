@@ -65,7 +65,7 @@ def sep_into_freq(v_comps,pings_per_day,depth_bin_num):
         return []
 
 
-def plot_decomp_v(v_comps,save_path,plot_params,freq='all'):
+def plot_decomp_v(v_comps,plot_params,freq='all'):
     ''' Plot each components of the decomposition '''
     # 1 freq results
     if v_comps.ndim==3:
@@ -91,10 +91,16 @@ def plot_decomp_v(v_comps,save_path,plot_params,freq='all'):
         fig_v,ax_v = plt.subplots(v_comps.shape[0],v_comps.shape[1],sharey=True,sharex=True)
         for comp in range(v_comps.shape[0]):  # component loop
             for ff in range(v_comps.shape[1]):  # frequency loop
-                im = imshow(ax_v[comp,ff],v_comps[comp,ff,:,:],aspect='auto')
+                # Get color axis limtis
+                cmean = np.mean(v_comps[comp,ff,:,:].reshape((-1,1)))
+                cstd = np.std(v_comps[comp,ff,:,:].reshape((-1,1)))
+                cmax = np.max(v_comps[comp,ff,:,:].reshape((-1,1)))
+                # Plot
+                im = imshow(ax_v[comp,ff],v_comps[comp,ff,:,:],aspect='auto',vmax=cmax,vmin=cmean-cstd*3)
                 divider = make_axes_locatable(ax_v[comp,ff])
                 cax = divider.append_axes("right", size="2%", pad=0.05)
                 cbar = plt.colorbar(im,cax=cax)
+                # Set labels
                 ax_v[comp,ff].set_xticks(plot_params['time_tick'])
                 ax_v[comp,ff].set_xticklabels(plot_params['time_label'])
                 ax_v[comp,ff].set_yticks(plot_params['depth_tick'])
@@ -113,16 +119,100 @@ def plot_decomp_v(v_comps,save_path,plot_params,freq='all'):
                     ax_v[comp,ff].set_ylabel('Depth',fontsize=14)
         fig_v.set_figwidth(16)
         fig_v.set_figheight(10)
-    save_fname = '%s%02d_%s_%dcomps_vec.png' % (plot_params['year'],plot_params['month'],str(freq),v_comps.shape[0])
-    plt.savefig(os.path.join(save_path,save_fname))
+    return fig_v
 
 
-def plot_decomp_transform(r_mtx,save_path,plot_params,freq='all'):
+def plot_decomp_transform(r_mtx,plot_params,freq='all'):
     ''' Plot transformed data '''
-    plt.imshow(r_mtx,aspect='auto')
-    plt.xlabel('Components')
-    plt.ylabel('Day of month')
-    plt.colorbar()
-    plt.title(str(freq)+' kHz, %d components' % r_mtx.shape[1],fontsize=16)
-    save_fname = '%d%02d_%s_%dcomps_tfm.png' % (plot_params['year'],plot_params['month'],str(freq),r_mtx.shape[1])
-    plt.savefig(os.path.join(save_path,save_fname))
+    fig,ax = plt.subplots(1)
+    cax = ax.imshow(r_mtx.T,aspect='auto')
+    ax.set_xlabel('Day of month')
+    ax.set_ylabel('Components')
+    fig.colorbar(cax)
+    fig.set_figwidth(8)
+    fig.set_figheight(2)
+    ax.set_title(str(freq)+' kHz, %d components' % r_mtx.shape[1],fontsize=16)
+    return fig
+    
+    
+def get_data_based_on_day(every_ping,SITE_CODE,data_path):
+    ''' Get data for pings specified using the datetime structure every_ping
+        SITE_CODE is the location code for the instrument, right now it should be 'CE04OSPS' or 'CE02SHBP'
+        data_path is the path where the data are stored
+        The function will assemble the correct filename based on dates to get to the ping data
+    '''
+    cnt = 0  # counter for location in unpacked array
+    y_want = np.unique(np.asarray([every_ping[x].year for x in range(len(every_ping))]))
+    for y in y_want:  # loop through all years included
+        ping_sel_y = [x for x in every_ping if x.year==y]  # all pings from year y               
+        m_want = np.unique(np.asarray([ping_sel_y[x].month for x in range(len(ping_sel_y))]))
+
+        for m in m_want:
+            # y,m are the filename   
+            ym_fname = datetime.datetime.strftime(datetime.date(y,m,1),'%Y%m');
+            ping_sel_m = [x for x in ping_sel_y if x.month==m]  # all pings from month m
+
+            # Open h5 file
+            f = h5py.File(os.path.join(data_path,SITE_CODE+'_'+ym_fname+'.h5'),'r')
+
+            # Get f['data_times'] idx for every hour in all days in the month
+            all_idx = [find_nearest_time_idx(f['data_times'],t) for t in ping_sel_m]
+            all_idx = np.array(all_idx)  # to allow numpy operation                                                                               
+            # Inititalize mtx if this is the first file read
+            if m==m_want[0] and y==y_want[0]:
+                ping_time = np.empty(len(every_ping))  # pinging time                                                                            
+                ping_time[:] = np.nan
+                Sv_tmp = f['Sv'][:,:,0]                 # Sv array                                                                                
+                Sv_mtx = np.empty((Sv_tmp.shape[0],Sv_tmp.shape[1],len(every_ping)))
+                Sv_mtx[:] = np.nan
+                bin_size = f['bin_size'][0]             # size of each depth bin
+                
+            # Fill in array
+            notnanidx = np.ndarray.flatten(np.argwhere(~np.isnan(all_idx)))
+            if notnanidx.any():  # if notnanidx not empty, then fill in values
+                ping_time[notnanidx+cnt] = f['data_times'][all_idx[notnanidx].tolist()]
+                Sv_mtx[:,:,notnanidx+cnt] = f['Sv'][:,:,all_idx[notnanidx].tolist()]
+
+            # Increment counter
+            cnt = cnt+len(all_idx)
+            
+            # Close h5 file
+            f.close()
+        
+    return Sv_mtx,ping_time,bin_size
+
+
+def clean_days(max_missing_ping,pings_per_day,Sv_mtx,ping_time):
+    ''' Clean up Sv_mtx: delete days with too many missing pings '''
+#     nan_ping_idx = np.isnan(Sv_mtx[0,0,:]).reshape((-1,pings_per_day))  # get ping index where Sv_mtx is NaN
+    nan_ping_idx = np.isnan(ping_time).reshape((-1,pings_per_day))  # get ping index where Sv_mtx is NaN
+    num_nan_of_day = np.sum(nan_ping_idx,1)  # number of missing pings of each day
+    
+    # Determine days and idx with lots of missing pings                                                             
+    day_to_delete = []
+    idx_to_delete = []
+    for day in range(len(num_nan_of_day)):
+        if num_nan_of_day[day]>max_missing_ping:
+            day_to_delete.append(day)
+            idx_to_delete.append(day*pings_per_day+np.arange(0,pings_per_day))
+    day_to_delete = np.array(day_to_delete)
+    idx_to_delete = np.ndarray.flatten(np.array(idx_to_delete))
+    Sv_mtx_clean = np.delete(Sv_mtx,idx_to_delete,axis=2)  # delete bad idx
+    ping_time_clean = np.delete(ping_time,idx_to_delete)  # delete bad idx
+    return Sv_mtx_clean,ping_time_clean,idx_to_delete,day_to_delete
+
+
+def clean_pings(Sv_mtx,ping_time):
+    ''' Clean up Sv_mtx: fill in missing pings '''
+#     nan_ping_idx = np.ndarray.flatten(np.argwhere(np.isnan(Sv_mtx[0,0,:])))  # ping index where Sv_mtx is NaN
+    nan_ping_idx = np.ndarray.flatten(np.argwhere(np.isnan(ping_time)))  # ping index where Sv_mtx is NaN
+    fill_idx = np.copy(nan_ping_idx)
+    for idx in nan_ping_idx:
+        if idx!=0:
+            Sv_mtx[:,:,idx] = Sv_mtx[:,:,idx-1]
+            ping_time[idx] = ping_time[idx-1]
+        else:
+            good_idx = np.ndarray.flatten(np.argwhere(~np.isnan(ping_time)))  # ping index where Sv_mtx is not NaN
+            Sv_mtx[:,:,idx] = Sv_mtx[:,:,good_idx[0]]
+            ping_time[idx] = ping_time[good_idx[0]]
+    return Sv_mtx, ping_time
