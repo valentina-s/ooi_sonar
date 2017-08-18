@@ -25,7 +25,7 @@ plt.rcParams['image.cmap'] = 'jet'
 # Get info of all files and set path
 #data_path = '/media/wu-jung/My Passport/OOI/ooi_all_data_h5'
 data_path = '/Volumes/wjlee_apl_2/ooi_zplsc_h5_figs/'
-fname_form = 'CE02SHBP_2017*.h5'                                                   
+fname_form = 'CE04OSPS_2017*.h5'                                                   
 fname_all = glob.glob(os.path.join(data_path,fname_form))
 #save_path = '/home/wu-jung/internal_2tb/ooi_sonar/figs/plot_echogram_month'
 save_path = '/Volumes/wjlee_apl_2/ooi_zplsc_h5_figs/'
