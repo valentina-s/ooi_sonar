@@ -10,4 +10,4 @@ Comparing the "echograms," or sonar images of the water column, compiled from da
 
 Along with the awe we experienced during this solar eclipse, the fact that we could just download the data and observe marine organism responses in almost real-time was an excellent demonstration of the power of the ocean observatory network: Anyone from anywhere, if interested, can join in at any time to take a look at a corner of the vast ocean and discover something exciting.
 
-Big thanks to all the people who have worked through days and nights over these past 10 years to make this possible, and of course the [National Science Foundation](https://www.nsf.gov/) for supporting this endeavor!
+Big thanks to all the people who have worked through days and nights over these past 10 years to make this possible, and of course to the [National Science Foundation](https://www.nsf.gov/) for supporting this endeavor!
