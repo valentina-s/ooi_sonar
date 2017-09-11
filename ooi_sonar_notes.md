@@ -30,7 +30,6 @@
 * About finding peaks in python: [discussion](https://blog.ytotech.com/2015/11/01/findpeaks-in-python/) and associated [github page](https://github.com/MonsieurV/py-findpeaks)
 * Getting data loaded and echogram plotted using OOI repository code! :)
 
-############################################
 ## 2017/01/26
 * `os.getcwd()` gets current direcotry
 * Indicator function: `[int(x == '20150911') for x in date_list]`
@@ -75,9 +74,39 @@
 * Comparison of NMF analysis on either single frequencies or all 3 frequencies together for 30 days of data: it seems like the decomposition is more stable using all 3 frequencies together.
 * Also tried NMF analysis on 80 consecutive days of data: it seems like the patterns are a little “washed away” probably due to larger variability across longer time
 * Noticed that the echosounders sometimes skipped pinging at particular instances
-* Questions:
-	* How to deal with missing data? 1 ping vs multiple hours in a day
-	* 
+
+############################################
+## 2017/02/20
+Summarize discussions this and last week:
+
+* Discussed with Sasha about rPCA/rNMF: he used different cost functions and different formulation than the PCA pursuit which doesn't allow any parameter tuning. He's currently debugging the Julia code, which will allow us to tune the parameter to get different "sparse" components.
+* The ["multi-resolution dynamic mode decomposition"](https://arxiv.org/pdf/1506.00564.pdf) can potentially be used to detect changes in our data. In the example they use the SST data to discover the El Niño event in 1997. Can we use it to find some usual/unusual patterns in the echogram?
+* Thinking about using [subspace tracking](http://web.eecs.umich.edu/~girasole/?page_id=190) to detect changes in the echogram? maybe in the long run...
+
+
+############################################
+## 2017/02/28
+* rPCA to separate background and sparse components, and decompose background component
+* remove surface wave from the decomposition
+* use sliding window for NMF and use previous components to "seed" the following decomposition --> use results of this to see if can derive/observe longer temporal scale patterns
+
+############################################
+## 2017/03/02
+* correlation with external variable using NMF?
+
+############################################
+## 2017/03/07
+* Modules to eliminate nan pings and spit out nan locations and fixed matrix:
+	* `get_data_based_on_day`
+	* `clean_days`
+	* `clean_pings`
+* Do sliding window NMF
+
+############################################
+## 2017/03/09
+* Discussion with Valentina and Sasha on how to structure the optimization problem
+* Make list of specific goals for follow-up after incubator
+* Need to: plot components across all 3 frequencies with same caxis
 
 
 
@@ -85,7 +114,17 @@
 ## TO-DO
 * Check if decimated power (envelope?) series give the same statistics as the original time series
 * Need to take care of the divided by zero warning for TVG
+* Histogram statistics for the echogram
+* Do decomposition without the surface layer
+* Topic modeling--> finding the best number of components
 
+## Goals
+* Methods to determine the best number of components
+* Continuity of components (within and across windows)
+* Constraints for slow variation in both components and weights
+* Constraints for force using spatial relationship in the image pixels (i.e., location is important)
+* Optimize extracting data from H5 files
+* Run PCP before NMF?
 
 
 ## RESOURCES
@@ -113,12 +152,30 @@
 	* Note the self-generated SSL **won't work with Safari** but is fine with other browsers
 * Machine learning [next steps](https://www.quora.com/I-have-completed-Andrew-Ngs-Coursera-class-on-Machine-Learning-What-should-I-do-next-What-*can*-I-do-next)
 * [Quick HDF5 with Pandas](http://glowingpython.blogspot.com/2014/08/quick-hdf5-with-pandas.html)
+* Various NMFs:
+	* [NIMFA](http://nimfa.biolab.si/)
+	* [Decomposing Time Series Data by a Non-negative Matrix Factorization Algorithm with Temporally Constrained Coefficients](http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7319146)
+	* [Exploting long-term temporal dependencies in NMF using recurrent neural networks with application to source separation](https://ccrma.stanford.edu/~gautham/Site/Publications_files/lewandowski-icassp2014.pdf)
+	* [NMF with spectral and temporal continuity criteria for monaural sound source separation](http://www.eurasip.org/Proceedings/Eusipco/Eusipco2014/HTML/papers/1569921699.pdf)
+	* [Dynamic NMF slides](https://www.uni-oldenburg.de/fileadmin/user_upload/mediphysik/ag/sigproc/audio/nmoh/downloads/D-NMF.pdf)
+* Dynamic NMF and temporal continuity:
+	* Derek Greene: [Dynamic Topic Modeling](https://github.com/derekgreene/dynamic-nmf), [Temporal stability](https://github.com/derekgreene/topic-stability),[How Many Topics? Stability Analysis for Topic Models](https://arxiv.org/abs/1404.4606)
+* [A Unified View of Static and Dynamic Source
+Separation Using Non-Negative Factorizations](https://ccrma.stanford.edu/~gautham/Site/Publications_files/smaragdis-spm2014.pdf)
+* [23 types of regressions](http://www.datasciencecentral.com/profiles/blogs/23-types-of-regression)
+* DMD in [pyrunner](http://www.pyrunner.com/weblog/2016/07/25/dmd-python/)
+* [Sparse DMD](https://github.com/aaren/sparse_dmd/blob/master/sparse_dmd/dmd.py)
+
+## Possible funding sources:
+* NSF [ABI](https://www.nsf.gov/bio/dbi/about.jsp)
+* NSF [BIGDATA](https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=504767)
 
 
 ## REFERENCES
 * Recent paper about krill Sv38 and Sv120 ratio: [Volume backscattering strength of ice krill (Euphausia crystallorophias) in the Amundsen Sea coastal polynya](http://www.sciencedirect.com/science/article/pii/S0967064515002106)
 * Correlate backscatteing with oceanographic background changes [Acoustic backscatter observations with implications for seasonal and vertical migrations of zooplankton and nekton in the Amundsen shelf (Antarctica)](http://www.sciencedirect.com/science/article/pii/S0272771414003485)
-
+* [Multi-resolution dynamic mode decomposition](https://arxiv.org/pdf/1506.00564.pdf) 
+* [Subspace tracking](http://web.eecs.umich.edu/~girasole/?page_id=190) algorithms
 
 ## Misc Python notes
 * the `take` and `put` functions in general have better performance than their fancy indexing equivalents by a significant margin

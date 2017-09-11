@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/Users/wujung/anaconda/envs/py27/bin/python
 
 '''
 Plot echogram for all month-long HDF5 files for data overview
@@ -23,15 +23,17 @@ plt.rcParams['image.cmap'] = 'jet'
 
 
 # Get info of all files and set path
-data_path = '/media/wu-jung/My Passport/OOI/ooi_all_data_h5'
-fname_form = '*.h5'                                                   
+#data_path = '/media/wu-jung/My Passport/OOI/ooi_all_data_h5'
+data_path = '/Volumes/wjlee_apl_2/ooi_zplsc_h5_figs/'
+fname_form = 'CE04OSPS_2017*.h5'                                                   
 fname_all = glob.glob(os.path.join(data_path,fname_form))
-save_path = '/home/wu-jung/internal_2tb/ooi_sonar/figs/plot_echogram_month'
+#save_path = '/home/wu-jung/internal_2tb/ooi_sonar/figs/plot_echogram_month'
+save_path = '/Volumes/wjlee_apl_2/ooi_zplsc_h5_figs/'
 
 H5_FILENAME_MATCHER = re.compile('(?P<SITE_CODE>\S*)_(?P<YearMonth>\S*)\.\S*')
 
 
-for fname in fname_all[28:-1]:
+for fname in fname_all:
     print 'Processing '+fname+' ...'
 
     # Open h5 file

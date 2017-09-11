@@ -17,7 +17,10 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
 def find_nearest_time_idx(all_timestamp_num,time_wanted):
-    ''' Function to find nearest element '''
+    '''
+    Function to find nearest element
+    time_wanted is a datetime object
+    '''
     time_wanted_num = date2num(time_wanted)
     idx = np.searchsorted(all_timestamp_num, time_wanted_num, side="left")
     if idx > 0 and (idx == len(all_timestamp_num) or \
@@ -26,7 +29,7 @@ def find_nearest_time_idx(all_timestamp_num,time_wanted):
 
     # If interval between the selected index and time wanted > 2 seconds
     sec_diff = datetime.timedelta(all_timestamp_num[idx]-time_wanted_num).total_seconds()
-    if math.fabs(sec_diff)>1:
+    if math.fabs(sec_diff)>2:
         return np.nan
     else:
         return idx

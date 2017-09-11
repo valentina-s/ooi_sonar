@@ -1,13 +1,15 @@
 
-from mi.instrument.kut.ek60.ooicore.zplsc_b import *
-import glob
-# import numpy as np   # already imported in zplsc_b
-import datetime
+import glob, os, sys
+import datetime as dt  # quick fix to avoid datetime and datetime.datetime confusion
 from matplotlib.dates import date2num, num2date
 from calendar import monthrange
 import h5py
 import matplotlib.pylab as plt
-from modest_image import imshow
+# from modest_image import imshow
+# import numpy as np   # already imported in zplsc_b
+
+sys.path.append('/Users/wujung/code/mi-instrument/')
+from mi.instrument.kut.ek60.ooicore.zplsc_b import *
 
 
 
@@ -46,8 +48,8 @@ def get_date_idx(date_wanted,fname_all):
     if len(idx_date)!=0:
         # if midnight was recorded in the previous file
         # AND if the previous record is the day before
-        day_diff = datetime.datetime.strptime(date_list[idx_date[0]], "%Y%m%d").toordinal() -\
-                   datetime.datetime.strptime(date_list[idx_date[0]-1], "%Y%m%d").toordinal()
+        day_diff = dt.datetime.strptime(date_list[idx_date[0]], "%Y%m%d").toordinal() -\
+                   dt.datetime.strptime(date_list[idx_date[0]-1], "%Y%m%d").toordinal()
         if time_list[idx_date[0]]>'000000' and day_diff==1:
             idx_date.insert(0,idx_date[0]-1)
     else:
@@ -86,7 +88,7 @@ def unpack_raw_to_h5(fname,h5_fname,deci_len=[]):
     if "Sv" in f:  # if file alread exist and contains Sv mtx
         # Check if start time of this file is before last time point of last file
         # Is yes, discard current file and break out from function
-        time_diff = datetime.timedelta(data_times[0]-f['data_times'][-1])
+        time_diff = dt.timedelta(data_times[0]-f['data_times'][-1])
         hr_diff = (time_diff.days*86400+time_diff.seconds)/3600
         if hr_diff<0:
             print '-- New file time bad'
