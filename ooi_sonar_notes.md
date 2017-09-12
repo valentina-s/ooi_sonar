@@ -1,6 +1,7 @@
 # OOI Sonar Data Processing Project
 
-############################################
+
+
 ## 2017/01/16
 * Found out [Scrapy](https://scrapy.org) is a nice tool for scrapying websites ([tutorial](https://doc.scrapy.org/en/1.3/intro/overview.html)). Seems straightforward to use and make crawling the website tree very easy. Later on when we need to make the developed methods more widely applicable we can consider using this.
 * For now since we just need to download a large chunk of data for exploration, it seems sufficient to just use `wget`.
@@ -14,7 +15,8 @@
 	* `-A acclist`: same as `--accept`; `acclist` can be a list of file suffixes or patterns, can use `*`, `?`, etc.
 * Resource: an [example code](https://github.com/billhowe/ooifetch/blob/master/fetchmovies.py) to look and fetch movies from OOI raw data server.
 
-############################################
+
+
 ## 2017/01/24
 * `conda info --envs` to see which env is on
 * `conda activate py27` switch to python 2.7 environment
@@ -30,13 +32,16 @@
 * About finding peaks in python: [discussion](https://blog.ytotech.com/2015/11/01/findpeaks-in-python/) and associated [github page](https://github.com/MonsieurV/py-findpeaks)
 * Getting data loaded and echogram plotted using OOI repository code! :)
 
+
+
 ## 2017/01/26
 * `os.getcwd()` gets current direcotry
 * Indicator function: `[int(x == '20150911') for x in date_list]`
 * map and lambda: `map(lambda x: x.group('Date'),raw_file_times)`
 * ways to iterate over dictionary: `freq = {k: str(int(v/1E3))+'k' for (k,v) in frequencies.items()}  # get frequencies`
 
-############################################
+
+
 ## 2017/01/30-02/01
 * Use memory profiler:
 	```
@@ -50,32 +55,37 @@
 * `matplotlib` [subplot demo](http://matplotlib.org/examples/pylab_examples/subplots_demo.html)
 * Use `f['Sv2'].dims[0][0][0]` to access the attached dimension scale
 
-############################################
+
+
 ## 2017/02/03
 * Discussion with Valentina on analysis:
 	* PCA, ICA, NMF
 	* scikit learn decomposition [tutorial](http://scikit-learn.org/stable/modules/decomposition.html)
 	* GIL **"lock"**
 
-############################################
+
+
 ## 2017/02/04-05
 * Code to index `data_times` and `Sv` of specific times
 * Found out the first ping of each day seems to have smaller amplitude than the rest of the day. **[CONFIRM THIS WITH SKIP]**
 
-############################################
+
+
 ## 2017/02/07-12
 * Get PCA, ICA, and NMF working for sonar data
 * Spent lot of time figuring out how to use `numpy.reshape()`. It's not very intuitive in that the elements are taken to fill the *last* instead of the *first* dimension of the array.
 * `h5py` doesn't allow duplicated indexing as in `numpy`, see [here](https://github.com/h5py/h5py/issues/8)
 
-############################################
+
+
 ## 2017/02/13
 * Set up jupyter noteboook server on the APL machine (see resources below for how-to)
 * Comparison of NMF analysis on either single frequencies or all 3 frequencies together for 30 days of data: it seems like the decomposition is more stable using all 3 frequencies together.
 * Also tried NMF analysis on 80 consecutive days of data: it seems like the patterns are a little “washed away” probably due to larger variability across longer time
 * Noticed that the echosounders sometimes skipped pinging at particular instances
 
-############################################
+
+
 ## 2017/02/20
 Summarize discussions this and last week:
 
@@ -84,17 +94,19 @@ Summarize discussions this and last week:
 * Thinking about using [subspace tracking](http://web.eecs.umich.edu/~girasole/?page_id=190) to detect changes in the echogram? maybe in the long run...
 
 
-############################################
+
 ## 2017/02/28
 * rPCA to separate background and sparse components, and decompose background component
 * remove surface wave from the decomposition
 * use sliding window for NMF and use previous components to "seed" the following decomposition --> use results of this to see if can derive/observe longer temporal scale patterns
 
-############################################
+
+
 ## 2017/03/02
 * correlation with external variable using NMF?
 
-############################################
+
+
 ## 2017/03/07
 * Modules to eliminate nan pings and spit out nan locations and fixed matrix:
 	* `get_data_based_on_day`
@@ -102,12 +114,44 @@ Summarize discussions this and last week:
 	* `clean_pings`
 * Do sliding window NMF
 
-############################################
+
+
 ## 2017/03/09
 * Discussion with Valentina and Sasha on how to structure the optimization problem
 * Make list of specific goals for follow-up after incubator
 * Need to: plot components across all 3 frequencies with same caxis
 
+
+
+## 2017/09/11
+* Pick back up the EK60 .RAW unpacking code. Check what was changed/added from the forked mi-instrument package at that time.
+* Changed `parse_echogram_file` and `read_header`: added output `config_header` and `config_transducer`, which are used in new function `get_cal_params`.
+* `config_header` outputs are from function `read_config_header` from `zplsc_echogrampy` that was supplied in the forked mi-instrument package.
+* `config_transducer` were added by WJL and read transducer parameters using `read_config_transducer` supplied by the forked mi-instrument package
+* The various parameters in `cal_params` are unpacked from `config_header`, `config_transducer`, and `particle_data`. `particle_data` were unpacked from .raw file using `parse_echogram_file`
+* Also added `data_times = (data_times / (60 * 60 * 24)) + REF_TIME` toward the end of `parse_echogram_file` and transpose the variable `power_data_dict`. This conversion was produced referencing `ZPLSPlot` in `zplsc_echogram.py`
+* Params to add (? or not??):
+	* to `cal_param` (corresponds to the `ping` structure array in Matlab Echolab):
+		- bandwidth
+		- heave/roll/pitch
+		- temperature
+		- trawl*
+		- offset
+		- count
+		- power
+		- alongship
+		- athwartship
+		- samplerange
+		- seg
+	* **The above data are stored in `sample_data` unpacked by function `process_sample`, can be seen from `sample_dtype`, just not extracted by the current `parse_echogram_file`**
+* Variable correspondence:
+	* `config_transducer` -- `data.config`
+	* `cal_param` -- part of `data.ping`
+* The mi-instrument implementation `parse_echogram_file` only includes the `RAW0` datagram and ignore all others found in `readEKRaw.m`
+* The various parameters in `cal_params` are unpacked from `config_header`, `config_transducer`, and `particle_data`. `particle_data` were unpacked from .raw file using `parse_echogram_file`
+* In `parse_echogram_file`, `sample_data` refers to the params and `power_data` refers to the actual echo return data
+* **CHECK**: in `get_cal_params` if using `particle_data[0]` is adequate or if need data from other index --> perhaps the values are identical?
+* **CHECK**: power2Sv routine between Matlab and Python
 
 
 
