@@ -178,8 +178,11 @@ Sv[n+1] = (power_data_dict[n+1].T \
              +TVG +2*cal_params[n]['absorptioncoefficient']*rangeCorrected\
               -CSv -Sac).T
 ```
-
-
+* Temperature readings in the .RAW files are all identical --> need to find other sources to estimate seawater absorption
+* **NEXT TO-DOs**:
+	* Find data from profiler and estimate seawater absorption at OOI locations --> go to [this page](http://oceanobservatories.org/site/ce04osps/) to use CTD data from both the profiler and the platform
+	* Implement background noise estimation/remove from De Robertis & Higginbottom 2007
+	* Think about the bin size to average data for MVBS
 
 
 
