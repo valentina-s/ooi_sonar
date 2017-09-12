@@ -150,8 +150,37 @@ Summarize discussions this and last week:
 * The mi-instrument implementation `parse_echogram_file` only includes the `RAW0` datagram and ignore all others found in `readEKRaw.m`
 * The various parameters in `cal_params` are unpacked from `config_header`, `config_transducer`, and `particle_data`. `particle_data` were unpacked from .raw file using `parse_echogram_file`
 * In `parse_echogram_file`, `sample_data` refers to the params and `power_data` refers to the actual echo return data
-* **CHECK**: in `get_cal_params` if using `particle_data[0]` is adequate or if need data from other index --> perhaps the values are identical?
-* **CHECK**: power2Sv routine between Matlab and Python
+* **CHECK** **(V)**: in `get_cal_params` if using `particle_data[0]` is adequate or if need data from other index --> perhaps the values are identical? --> No, this is because somehow `particle_data` was saved as a tuple with only 1 element, params for different frequencies were accessed using `particle_data[0]['param_name'][freq_num]`
+* **CHECK** **(V)**: power2Sv routine between Matlab and Python
+
+
+
+## 2017/09/12
+* Download all data from CE04OSPS and CE02SHBP sites (use `wget -c -N` options to do incremental mirroring and fix any previous incomplete files)
+* Finished checking power2Sv routine in Matlab and Python --> good match!
+* **CHECK** **(V)** what are the actual ranges returned by the following section in Matlab `readEKRaw_ConvertPower.m`
+```matlab
+%  create range vector (in m)
+data.pings(n).range = double((0:pSize(1) - 1) + ...
+	double(data.pings(n).samplerange(1)) - 1)' * dR;
+```
+
+The above corresponds to `range_vec = np.arange(pSize[0]) * dR` in Python `power2Sv` function.
+
+* **Simplify** **(V)** the following section in Python `power2Sv` using broadcasting
+```
+Sv[n+1] = power_data_dict[n+1] + np.transpose(np.matlib.repmat(TVG,pSize[1],1)) +\
+	2*cal_params[n]['absorptioncoefficient']*np.transpose(np.matlib.repmat(rangeCorrected,pSize[1],1)) - CSv - Sac
+```
+to
+```
+Sv[n+1] = (power_data_dict[n+1].T \
+             +TVG +2*cal_params[n]['absorptioncoefficient']*rangeCorrected\
+              -CSv -Sac).T
+```
+
+
+
 
 
 
