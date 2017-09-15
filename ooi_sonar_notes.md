@@ -186,6 +186,10 @@ Sv[n+1] = (power_data_dict[n+1].T \
 
 
 
+## 2017/09/14
+* Finished reading De Robertis & Higginbottom 2007 yesterday, will test implementing the noise removal algorithm today
+
+
 
 ## TO-DO
 * Check if decimated power (envelope?) series give the same statistics as the original time series
