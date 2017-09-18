@@ -194,6 +194,9 @@ Sv[n+1] = (power_data_dict[n+1].T \
 * The results and functions are in notebooks:
     * `Noise removal (during development, results not correct).ipynb` contains correct part 1. results, but part 2. algorithms were somehow broken
     * `Noise removal.ipynb` has everything in the correct form
+* Need to determine a Sv thresholding method before calculating $$\Del S_V$$: tested 2 methods:
+    * De Robertis & Higginbottom 2007: using the noise estimated as in `Noise removal.ipynb`
+    * Logerwill & Wilson 2004: simple thresholding approach, also used in McKelvey 2004, Jech & Michaels 2006, Sato et al. 2015
 
 
 
