@@ -16,3 +16,6 @@
 2017-09-17 17:54:29,049 INFO MainThread mi.instrument.kut.ek60.ooicore.zplsc_b:342 Begin processing echogram data: '/media/wu-jung/wjlee_apl_2/ooi_zplsc_600m/OOI-D20170910-T000000.raw'
 2017-09-17 21:16:29,039 INFO MainThread mi.instrument.kut.ek60.ooicore.zplsc_b:342 Begin processing echogram data: '/media/wu-jung/wjlee_apl_2/ooi_zplsc_600m/OOI-D20150910-T000000.raw'
 2017-09-17 21:30:26,706 INFO MainThread mi.instrument.kut.ek60.ooicore.zplsc_b:342 Begin processing echogram data: '/media/wu-jung/wjlee_apl_2/ooi_zplsc_600m/OOI-D20170910-T000000.raw'
+2017-09-17 22:57:01,681 INFO MainThread mi.instrument.kut.ek60.ooicore.zplsc_b:342 Begin processing echogram data: '/media/wu-jung/wjlee_apl_2/ooi_zplsc_600m/OOI-D20150910-T000000.raw'
+2017-09-17 22:57:04,241 INFO MainThread mi.instrument.kut.ek60.ooicore.zplsc_b:342 Begin processing echogram data: '/media/wu-jung/wjlee_apl_2/ooi_zplsc_600m/OOI-D20170910-T000000.raw'
+2017-09-17 23:03:03,402 INFO MainThread mi.instrument.kut.ek60.ooicore.zplsc_b:342 Begin processing echogram data: '/media/wu-jung/wjlee_apl_2/ooi_zplsc_600m/OOI-D20170910-T000000.raw'
