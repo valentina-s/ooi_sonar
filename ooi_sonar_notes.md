@@ -197,7 +197,7 @@ Sv[n+1] = (power_data_dict[n+1].T \
 * Need to determine a Sv thresholding method before calculating $$\Del S_V$$: tested 2 methods:
     * De Robertis & Higginbottom 2007: using the noise estimated as in `Noise removal.ipynb`
     * Logerwill & Wilson 2004: simple thresholding approach, also used in McKelvey 2004, Jech & Michaels 2006, Sato et al. 2015
-
+* Lower SNR threshold needs to be used to retain more echogram points for data from 20150910 (SNR threshould=6) compared to data from 20170910 (SNR threshold=10). However, based on the method by Logermill & Wilson, the noise threshold should also be higher (-67 dB for 20150910 and -79 dB for 20170910).
 
 
 
