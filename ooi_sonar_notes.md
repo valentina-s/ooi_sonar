@@ -194,10 +194,22 @@ Sv[n+1] = (power_data_dict[n+1].T \
 * The results and functions are in notebooks:
     * `Noise removal (during development, results not correct).ipynb` contains correct part 1. results, but part 2. algorithms were somehow broken
     * `Noise removal.ipynb` has everything in the correct form
-* Need to determine a Sv thresholding method before calculating $$\Del S_V$$: tested 2 methods:
+* Need to determine a Sv thresholding method before calculating $$\Delta S_V$$: tested 2 methods:
     * De Robertis & Higginbottom 2007: using the noise estimated as in `Noise removal.ipynb`
     * Logerwill & Wilson 2004: simple thresholding approach, also used in McKelvey 2004, Jech & Michaels 2006, Sato et al. 2015
 * Lower SNR threshold needs to be used to retain more echogram points for data from 20150910 (SNR threshould=6) compared to data from 20170910 (SNR threshold=10). However, based on the method by Logermill & Wilson, the noise threshold should also be higher (-67 dB for 20150910 and -79 dB for 20170910).
+
+
+
+## 2017/09/18
+* First kind of successful try of dB-differencing: in `Frequency-differencing.ipynb`
+	* Spent lots of time figuring out how to handle pixles with NaN values in one or more frequencies
+	* Use 2 methods:
+		1. Use thresholding between 200 and 38 kHz (following in Sato et al. 2015)
+		2. Use color-coding by presence of particular combination of frequencies (follwoing Jech and Michaels 2006)
+* **CHECK** Need to check the simple Sv thresholding code again: see if can have a threshold selection criteria based on achieving stable NASC values (method used in Sato et al. 2015)
+* **UPDATE** functions related to noise estimation and MVBS calculation using masked array functionality
+
 
 
 
