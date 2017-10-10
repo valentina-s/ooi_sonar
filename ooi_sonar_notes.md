@@ -202,13 +202,17 @@ Sv[n+1] = (power_data_dict[n+1].T \
 
 
 ## 2017/09/18
-* First kind of successful try of dB-differencing: in `Frequency-differencing.ipynb`
+* First kind of successful try of dB-differencing: in `Freq-differencing.ipynb`
 	* Spent lots of time figuring out how to handle pixles with NaN values in one or more frequencies
 	* Use 2 methods:
 		1. Use thresholding between 200 and 38 kHz (following in Sato et al. 2015)
 		2. Use color-coding by presence of particular combination of frequencies (follwoing Jech and Michaels 2006)
 * **CHECK** Need to check the simple Sv thresholding code again: see if can have a threshold selection criteria based on achieving stable NASC values (method used in Sato et al. 2015)
-* **UPDATE** functions related to noise estimation and MVBS calculation using masked array functionality
+* **UPDATE** **(V)** functions related to noise estimation and MVBS calculation using masked array functionality
+
+
+## 2017/10/09
+* Update noise estimation functions and related operations using masked array functionality. The new frequency-differencing results are in `Freq-differencing 20171009.ipynb`
 
 
 
