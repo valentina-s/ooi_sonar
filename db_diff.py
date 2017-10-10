@@ -137,38 +137,6 @@ def remove_noise(power_data,cal,noise_est,ping_bin_range=40,tvg_correction_facto
 
 
 
-def mean_MVBS_th(Sv,th,depth_bin_size,ping_bin_range,depth_bin_range):
-    '''
-    Obtain mean MVBS after thresholding Sv
-    Ref: Logerwill & Wilson 2004, for determining appropriate Sv threshold
-    
-    INPUT:
-        th                Sv threshold: discard Sv values below th during averaging
-        depth_bin_size    depth bin size from unpacked data
-        ping_bin_range    average over M pings
-        depth_bin_range   average over depth_bin_range [m]
-    OUTPUT:
-        smoothed Sv data
-    '''
-
-    Sv_cp = np.ma.masked_less_equal(th,Sv);
-    
-    N = int(np.floor(depth_bin_range/depth_bin_size))  # total number of depth bins
-    
-    # Average Sv over M pings and N depth bins
-    depth_bin_num = int(np.floor(Sv_cp.shape[0]/N))
-    ping_bin_num = int(np.floor(Sv_cp.shape[1]/ping_bin_range))
-    MVBS = np.ma.empty([depth_bin_num,ping_bin_num])
-    for iD in range(depth_bin_num):
-        for iP in range(ping_bin_num):
-            depth_idx = np.arange(N) + N*iD
-            ping_idx = np.arange(ping_bin_range) + ping_bin_range*iP
-            MVBS[iD,iP] = 10*np.log10( np.nanmean(10**(Sv_cp[np.ix_(depth_idx,ping_idx)]/10)) )
-            
-    return MVBS
-
-
-
 def mean_MVBS(Sv,depth_bin_size,ping_bin_range,depth_bin_range):
     '''
     Obtain mean MVBS
@@ -198,7 +166,7 @@ def mean_MVBS(Sv,depth_bin_size,ping_bin_range,depth_bin_range):
 
 
 
-def multifreq_color_code(Sv38,Sv120,Sv200)
+def multifreq_color_code(Sv38,Sv120,Sv200):
     '''
     Multi-frequency color-coding regiem
     Ref: Jech and Michaels 2006

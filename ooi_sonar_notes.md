@@ -212,7 +212,9 @@ Sv[n+1] = (power_data_dict[n+1].T \
 
 
 ## 2017/10/09
-* Update noise estimation functions and related operations using masked array functionality. The new frequency-differencing results are in `Freq-differencing 20171009.ipynb`
+* Update noise estimation functions and related operations using masked array functionality. The new frequency-differencing results are in `Freq-differencing 20171009.ipynb`.
+* Add `db_diff.py`, which contains the functions and colormap definitions in `Freq-differencing 20171009.ipynb`.
+
 
 
 
@@ -223,6 +225,8 @@ Sv[n+1] = (power_data_dict[n+1].T \
 * Histogram statistics for the echogram
 * Do decomposition without the surface layer
 * Topic modeling--> finding the best number of components
+
+
 
 ## Goals
 * Methods to determine the best number of components
