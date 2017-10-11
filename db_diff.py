@@ -48,6 +48,7 @@ e_norm = colors.BoundaryNorm(e_bounds,e_cmap.N)
 def get_noise(power_data,depth_bin_size,ping_bin_range,depth_bin_range,tvgCorrectionFactor=2):
     '''
     INPUT:
+        power_data            2D mtx of power data [depth x ping num]
         ping_bin_range        average over M pings
         depth_bin_range       average over depth_bin_range [m]
         tvgCorrectionFactor   default (=2) is to apply TVG correction with offset of 2 samples
@@ -69,16 +70,25 @@ def get_noise(power_data,depth_bin_size,ping_bin_range,depth_bin_range,tvgCorrec
             power_bin[iD,iP] = np.mean(10**(power_data[np.ix_(depth_idx,ping_idx)]/10))
 
     # Noise = minimum value for each averaged ping
-    return np.min(power_bin,0)
+    return np.min(power_bin,0),ping_bin_num
 
 
 
 def remove_noise(power_data,cal,noise_est,ping_bin_range=40,tvg_correction_factor=2):
     '''
     Function for noise removal and TVG + absorption compensation
-    fn      sequence number of that particular freq in power_data
-            corresponds to index fn-1 in cal_params
-    tvg_correction_factor   default(=2) for converting power_data to Sv
+    Ref: De Robertis et al. 2010
+    
+    INPUT:
+        power_data      2D mtx of power data [depth x ping num]
+        noise_est       results from `get_noise`
+        ping_bin_range          average over M pings
+        depth_bin_range         average over depth_bin_range [m]
+        tvg_correction_factor   default(=2) for converting power_data to Sv
+    OUTPUT:
+        Sv_raw       TVG and absorption compensated Sv data, no noise removal
+        Sv_corr      TVG and absorption compensated Sv data, no noise removal        
+        Sv_noise     TVG and absorption compensated noise estimation
     '''
 
     # Get cal params
@@ -127,11 +137,11 @@ def remove_noise(power_data,cal,noise_est,ping_bin_range=40,tvg_correction_facto
         subtract = 10**(power_data[:,ping_idx]/10) -noise_est[iP]
         tmp = 10*np.log10(np.ma.masked_less_equal(subtract,0))
         tmp.set_fill_value(-999)
-        Sv_corr[:,ping_idx] = (tmp.T +TVG+ABS).T
-        Sv_noise[:,ping_idx] = np.array([10*np.log10(noise_est[iP])+TVG +ABS]*ping_bin_range).T
+        Sv_corr[:,ping_idx] = (tmp.T +TVG+ABS-CSv-Sac).T
+        Sv_noise[:,ping_idx] = np.array([10*np.log10(noise_est[iP])+TVG+ABS-CSv-Sac]*ping_bin_range).T
     
     # Raw Sv withour noise removal but with TVG/absorption compensation
-    Sv_raw = (power_data.T+TVG+ABS).T
+    Sv_raw = (power_data.T+TVG+ABS-CSv-Sac).T
     
     return Sv_raw,Sv_corr,Sv_noise
 

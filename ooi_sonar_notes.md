@@ -216,6 +216,11 @@ Sv[n+1] = (power_data_dict[n+1].T \
 * Add `db_diff.py`, which contains the functions and colormap definitions in `Freq-differencing 20171009.ipynb`.
 
 
+## 2017/10/10
+* **UPDATE**: Need to clean up code for unpacking `.raw` data and remove dependency from `mi-instruments`.
+
+
+
 
 
 
