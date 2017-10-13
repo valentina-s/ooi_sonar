@@ -206,6 +206,18 @@ def multifreq_color_code(Sv38,Sv120,Sv200):
 
 
 
-
+def get_power_data_mtx(data_dict,frequencies):
+    '''
+    Convert data_dict to numpy array
+    Input:
+        data_dict     power_data_dict or Sv from power2Sv()
+        frequencies   unpacked dict from parse_echogram_file()
+    '''
+    fval = frequencies.values()
+    fidx = sorted(range(len(fval)), key=lambda k: fval[k])   # get key sequence for low to high freq
+    fidx = [x+1 for x in fidx]
+    return np.array((data_dict[fidx[0]],\
+                     data_dict[fidx[1]],\
+                     data_dict[fidx[2]]))  # organize all values into matrix
 
 
