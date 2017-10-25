@@ -217,7 +217,13 @@ Sv[n+1] = (power_data_dict[n+1].T \
 
 
 ## 2017/10/10
-* **UPDATE**: Need to clean up code for unpacking `.raw` data and remove dependency from `mi-instruments`.
+* `MVBS NMF and dB-diff (during development).ipynb` contains routines for loading a single file, estimating noise, remove noise from unpacked power data, calculate MVBS, and conduct dB-differencing using the criteria as in `Freq-differencing 20171009.ipynb`. Note that the results are not very clean: the majority of the scatterers are classified as 'zooplankton' and very little 'fish' were classified. 
+
+* **NEED TO UPDATE**: Need to clean up code for unpacking `.raw` data and remove dependency from `mi-instruments`.
+
+
+## 2017/10/12
+* Realized that for stationary echosounders the best way to estimate noise might be to use the lowest noise point throughout each day, instead of every X pings. In `MVBS NMF and dB-diff (during development).ipynb` can clearly see how the DVM impacts the estimated noise level, and using those when there's much less zooplankton present in the water column would help getting a better noise estimate.
 
 
 

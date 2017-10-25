@@ -82,6 +82,8 @@ def remove_noise(power_data,cal,noise_est,ping_bin_range=40,tvg_correction_facto
     INPUT:
         power_data      2D mtx of power data [depth x ping num]
         noise_est       results from `get_noise`
+                        if pass in only a scalar, it will be treated as the noise estimate for all data
+                        if pass in a vecotr, the noise will be removed adaptively using values in the vector
         ping_bin_range          average over M pings
         depth_bin_range         average over depth_bin_range [m]
         tvg_correction_factor   default(=2) for converting power_data to Sv
@@ -128,17 +130,25 @@ def remove_noise(power_data,cal,noise_est,ping_bin_range=40,tvg_correction_facto
     # Compensate measurement for noise and corrected for transmission loss
     # also estimate Sv_noise component for subsequent SNR check
 
-    # Get Sv_noise
-    ping_bin_num = int(np.floor(power_data.shape[1]/ping_bin_range))
-    Sv_corr = np.ma.empty(power_data.shape)   # log domain corrected Sv
-    Sv_noise = np.empty(power_data.shape)  # Sv_noise
-    for iP in range(ping_bin_num):
-        ping_idx = np.arange(ping_bin_range) +iP*ping_bin_range
-        subtract = 10**(power_data[:,ping_idx]/10) -noise_est[iP]
+    # Noise removal
+    if noise_est.shape==():  # if noise_est is single element
+        subtract = 10**(power_data/10)-noise_est
         tmp = 10*np.log10(np.ma.masked_less_equal(subtract,0))
         tmp.set_fill_value(-999)
-        Sv_corr[:,ping_idx] = (tmp.T +TVG+ABS-CSv-Sac).T
-        Sv_noise[:,ping_idx] = np.array([10*np.log10(noise_est[iP])+TVG+ABS-CSv-Sac]*ping_bin_range).T
+        Sv_corr = (tmp.T+TVG+ABS-CSv-Sac).T
+        Sv_noise = 10*np.log10(noise_est)+TVG+ABS-CSv-Sac
+
+    else:
+        ping_bin_num = int(np.floor(power_data.shape[1]/ping_bin_range))
+        Sv_corr = np.ma.empty(power_data.shape)   # log domain corrected Sv
+        Sv_noise = np.empty(power_data.shape)  # Sv_noise
+        for iP in range(ping_bin_num):
+            ping_idx = np.arange(ping_bin_range) +iP*ping_bin_range
+            subtract = 10**(power_data[:,ping_idx]/10) -noise_est[iP]
+            tmp = 10*np.log10(np.ma.masked_less_equal(subtract,0))
+            tmp.set_fill_value(-999)
+            Sv_corr[:,ping_idx] = (tmp.T +TVG+ABS-CSv-Sac).T
+            Sv_noise[:,ping_idx] = np.array([10*np.log10(noise_est[iP])+TVG+ABS-CSv-Sac]*ping_bin_range).T
     
     # Raw Sv withour noise removal but with TVG/absorption compensation
     Sv_raw = (power_data.T+TVG+ABS-CSv-Sac).T
@@ -147,7 +157,7 @@ def remove_noise(power_data,cal,noise_est,ping_bin_range=40,tvg_correction_facto
 
 
 
-def mean_MVBS(Sv,depth_bin_size,ping_bin_range,depth_bin_range):
+def get_MVBS(Sv,depth_bin_size,ping_bin_range,depth_bin_range):
     '''
     Obtain mean MVBS
     
@@ -163,15 +173,15 @@ def mean_MVBS(Sv,depth_bin_size,ping_bin_range,depth_bin_range):
     N = int(np.floor(depth_bin_range/depth_bin_size))  # total number of depth bins
     
     # Average Sv over M pings and N depth bins
-    depth_bin_num = int(np.floor(Sv.shape[0]/N))
-    ping_bin_num = int(np.floor(Sv.shape[1]/ping_bin_range))
-    MVBS = np.empty([depth_bin_num,ping_bin_num])
-    for iD in range(depth_bin_num):
-        for iP in range(ping_bin_num):
-            depth_idx = np.arange(N) + N*iD
-            ping_idx = np.arange(ping_bin_range) + ping_bin_range*iP
-            MVBS[iD,iP] = 10*np.log10( np.nanmean(10**(Sv[np.ix_(depth_idx,ping_idx)]/10)) )
-            
+    depth_bin_num = int(np.floor(Sv.shape[1]/N))
+    ping_bin_num = int(np.floor(Sv.shape[2]/ping_bin_range))
+    MVBS = np.ma.empty([Sv.shape[0],depth_bin_num,ping_bin_num])
+    for iF in range(Sv.shape[0]):
+        for iD in range(depth_bin_num):
+            for iP in range(ping_bin_num):
+                depth_idx = np.arange(N) + N*iD
+                ping_idx = np.arange(ping_bin_range) + ping_bin_range*iP
+                MVBS[iF,iD,iP] = 10*np.log10( np.nanmean(10**(Sv[np.ix_((iF,),depth_idx,ping_idx)]/10)) )            
     return MVBS
 
 
@@ -219,5 +229,28 @@ def get_power_data_mtx(data_dict,frequencies):
     return np.array((data_dict[fidx[0]],\
                      data_dict[fidx[1]],\
                      data_dict[fidx[2]]))  # organize all values into matrix
+
+
+
+def find_nearest_time_idx(all_timestamp_num,time_wanted,tolerance):
+    '''
+    Function to find nearest element
+    time_wanted is a datetime object
+    tolerance is the max tolerance in second allowed between `time_wanted` and `all_timestamp`
+    all_timestamp_num is a numerical date object (i.e., output from `date2num`)
+    '''
+    time_wanted_num = date2num(time_wanted)
+    idx = np.searchsorted(all_timestamp_num, time_wanted_num, side="left")
+    if idx > 0 and (idx == len(all_timestamp_num) or \
+        np.abs(time_wanted_num - all_timestamp_num[idx-1]) < np.abs(time_wanted_num - all_timestamp_num[idx])):
+        idx -= 1
+
+    # If interval between the selected index and time wanted > `tolerance` seconds
+    sec_diff = dt.timedelta(all_timestamp_num[idx]-time_wanted_num).total_seconds()
+    if np.abs(sec_diff)>tolerance:
+        return np.nan
+    else:
+        return idx
+
 
 
