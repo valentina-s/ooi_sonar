@@ -1,16 +1,21 @@
 
 
-#import os, sys, glob
+import os, sys, glob
+import numpy as np
+import datetime as dt
+import h5py
+from matplotlib.dates import date2num
+import matplotlib.colors as colors
+
+sys.path.insert(0,'./mi_instrument')
+from mi.instrument.kut.ek60.ooicore import zplsc_b
+
 #from datetime import datetime
 #sys.path.insert(0,'/home/wu-jung/code_git/mi-instrument')
 
 #from mi.instrument.kut.ek60.ooicore.zplsc_b import *
 #from concat_raw import *
 
-import numpy as np
-import datetime as dt
-from matplotlib.dates import date2num
-import matplotlib.colors as colors
 
 
 # Colormap from Jech & Michaels 2006
@@ -219,6 +224,111 @@ def get_MVBS(Sv,depth_bin_size,ping_bin_range,depth_bin_range):
                 MVBS[iF,iD,iP] = 10*np.log10( np.nanmean(10**(Sv[np.ix_((iF,),depth_idx,ping_idx)]/10)) )            
     return MVBS
 
+
+
+def raw2MVBS_daterange(date_wanted,data_path,save_path,save_fname,\
+                       ping_time_param,ping_bin_range,depth_bin_range,tvg_correction_factor):
+    '''
+    Unpack .raw files within a certain date range, estimate noise, clean up data,
+    and calculate MVBS using specific params
+    '''
+
+    for iD,dd_curr in zip(range(len(date_wanted)),date_wanted):
+
+        # load files and get calibration params
+        fname = glob.glob(os.path.join(data_path,'OOI-D%s*.raw' %dd_curr))[0]
+        particle_data, data_times, power_data, freq, bin_size, config_header, config_transducer = \
+            zplsc_b.parse_echogram_file(fname)
+        cal_params = get_cal_params(power_data,particle_data,config_header,config_transducer)
+
+        # swap sequence of 120 kHz and 38 kHz cal_params and data
+        cal_params = [cal_params[fn] for fn in [1,0,2]]
+        power_data = get_power_data_mtx(power_data,freq)
+
+        # clean data
+        Sv_raw_tmp = np.ma.empty((power_data.shape))
+        Sv_corr_tmp = np.ma.empty((power_data.shape))
+        Sv_noise_tmp = np.ma.empty((power_data.shape[0:2]))
+        for fn in range(power_data.shape[0]):
+            noise_est,ping_bin_num = get_noise(power_data[fn,:,:],bin_size,ping_bin_range,depth_bin_range)
+            Sv_raw_tmp[fn,:,:],Sv_corr_tmp[fn,:,:],Sv_noise_tmp[fn,:] = \
+                    remove_noise(power_data[fn,:,:],cal_params[fn],noise_est.min(),ping_bin_range,tvg_correction_factor)
+
+        # set up indexing to get wanted pings
+        dd = dt.datetime.strptime(dd_curr,'%Y%m%d')
+        time_wanted = [dt.datetime(dd.year,dd.month,dd.day,hh,mm,ss) \
+                       for hh in ping_time_param['hour_all']\
+                       for mm in ping_time_param['min_all'] \
+                       for ss in ping_time_param['sec_all']]
+        idx_wanted = [find_nearest_time_idx(data_times,tt,2) for tt in time_wanted]
+        notnanidx = np.argwhere(~np.isnan(idx_wanted)).flatten()
+        notnanidx_in_all = np.array(idx_wanted)[notnanidx].astype(int)
+
+        # get data to be saved
+        ping_per_day = len(ping_time_param['hour_all'])*len(ping_time_param['min_all'])*len(ping_time_param['sec_all'])
+        Sv_raw = np.ma.empty((Sv_raw_tmp.shape[0],Sv_raw_tmp.shape[1],ping_per_day))
+        Sv_corr = np.ma.empty((Sv_raw_tmp.shape[0],Sv_raw_tmp.shape[1],ping_per_day))
+        Sv_noise = np.ma.empty((Sv_raw_tmp.shape[0],Sv_raw_tmp.shape[1],1))
+
+        Sv_raw[:,:,notnanidx] = Sv_raw_tmp[:,:,notnanidx_in_all]
+        Sv_corr[:,:,notnanidx] = Sv_corr_tmp[:,:,notnanidx_in_all]
+        Sv_noise[:,:,0] = Sv_noise_tmp
+        ping_time = date2num(time_wanted)
+
+        idx_save_mask = np.argwhere(np.isnan(idx_wanted))
+        Sv_raw[:,:,idx_save_mask] = np.ma.masked
+        Sv_corr[:,:,idx_save_mask] = np.ma.masked
+
+        # save into h5 file
+        sz = Sv_raw.shape
+        f = h5py.File(os.path.join(save_path,'%s_Sv.h5' %save_fname),"a")
+        if "Sv_raw" in f:  # if file alread exist and contains Sv mtx
+            print '-- H5 file exists, append new data mtx...'
+            # append new data
+            sz_exist = f['Sv_raw'].shape  # shape of existing Sv mtx
+            f['Sv_raw'].resize((sz_exist[0],sz_exist[1],sz_exist[2]+sz[2]))
+            f['Sv_raw'][:,:,sz_exist[2]:] = Sv_raw
+            f['Sv_corr'].resize((sz_exist[0],sz_exist[1],sz_exist[2]+sz[2]))
+            f['Sv_corr'][:,:,sz_exist[2]:] = Sv_corr
+            f['Sv_noise'].resize((sz_exist[0],sz_exist[1],sz_exist[2]+1))
+            f['Sv_noise'][:,:,sz_exist[2]:] = Sv_noise
+            f['ping_time'].resize((sz_exist[2]+sz[2],))
+            f['ping_time'][sz_exist[2]:] = ping_time
+        else:
+            print '-- New H5 file, create new dataset...'
+            # create dataset and save
+            f.create_dataset("Sv_raw", sz, maxshape=(sz[0],sz[1],None), data=Sv_raw, chunks=True)
+            f.create_dataset("Sv_corr", sz, maxshape=(sz[0],sz[1],None), data=Sv_corr, chunks=True)
+            f.create_dataset("Sv_noise", (Sv_raw.shape[0],Sv_raw.shape[1],1), maxshape=(sz[0],sz[1],None),\
+                             data=Sv_noise, chunks=True)
+            f.create_dataset("ping_time", (sz[2],), maxshape=(None,), data=ping_time, chunks=True)
+            f.create_dataset("depth_bin_size",data=bin_size)
+        f.close()
+
+        # get MVBS
+        MVBS = get_MVBS(Sv_corr,bin_size,ping_bin_range,depth_bin_range=5)
+
+        # save into h5 file
+        sz = MVBS.shape
+        ping_time_MVBS = ping_time[0::ping_bin_range]  # get ping time every ping_bin_range for MVBS
+
+        f = h5py.File(os.path.join(save_path,'%s_MVBS.h5' %save_fname),"a")
+        if "MVBS" in f:  # if file alread exist and contains Sv mtx
+            print '-- H5 file exists, append new data mtx...'
+            # append new data
+            sz_exist = f['MVBS'].shape  # shape of existing Sv mtx
+            f['MVBS'].resize((sz_exist[0],sz_exist[1],sz_exist[2]+sz[2]))
+            f['MVBS'][:,:,sz_exist[2]:] = MVBS
+            f['ping_time'].resize((sz_exist[2]+sz[2],))
+            f['ping_time'][sz_exist[2]:] = ping_time_MVBS
+        else:
+            print '-- New H5 file, create new dataset...'
+            # create dataset and save
+            f.create_dataset("MVBS", sz, maxshape=(sz[0],sz[1],None), data=MVBS, chunks=True)
+            f.create_dataset("ping_time", (sz[2],), maxshape=(None,), data=ping_time_MVBS, chunks=True)
+            f.create_dataset("depth_bin_size",data=depth_bin_range)
+        f.close()
+        
 
 
 def multifreq_color_code(Sv38,Sv120,Sv200):
