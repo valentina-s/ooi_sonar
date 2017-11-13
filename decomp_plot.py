@@ -113,9 +113,9 @@ def plot_cmp_data_decomp(V,X,plot_day,ping_per_day_mvbs,figsize_input,same_cax_o
                 v = X[iX,::-1,ping_per_day_mvbs*(plot_day-1)+np.arange(ping_per_day_mvbs)]   # data to be plotted
 
             if same_cax_opt==1:
-                im = ax[iY,iX].imshow(v.T,aspect='auto',vmax=cmean+cstd*6,vmin=cmean-cstd*3)#,cmap=e_cmap,norm=e_norm)
+                im = ax[iY,iX].imshow(v.T,aspect='auto',vmax=cmean+cstd*6,vmin=cmean-cstd*3)
             else:
-                im = ax[iY,iX].imshow(v.T,aspect='auto')#,cmap=e_cmap,norm=e_norm)
+                im = ax[iY,iX].imshow(v.T,aspect='auto')
             divider = make_axes_locatable(ax[iY,iX])
             cax = divider.append_axes("right", size="2%", pad=0.1)
             cbar = plt.colorbar(im,cax=cax)
@@ -133,13 +133,13 @@ def plot_original_echogram(MVBS,plot_start_day,plot_range_day):
     fig,ax = plt.subplots(3,1,figsize=(15,6))
     ax[0].imshow(MVBS[0,1:-2:-1,ping_per_day_mvbs*(plot_start_day-1)\
                       +np.arange(ping_per_day_mvbs*plot_range_day)].T,\
-                 aspect='auto',vmin=-80,vmax=-30)#,cmap=e_cmap,norm=e_norm)
+                 aspect='auto',vmin=-80,vmax=-30)
     ax[1].imshow(MVBS[1,1:-2:-1,ping_per_day_mvbs*(plot_start_day-1)\
                       +np.arange(ping_per_day_mvbs*plot_range_day)].T,\
-                 aspect='auto',vmin=-80,vmax=-30)#,cmap=e_cmap,norm=e_norm)
+                 aspect='auto',vmin=-80,vmax=-30)
     ax[2].imshow(MVBS[2,1:-2:-1,ping_per_day_mvbs*(plot_start_day-1)\
                       +np.arange(ping_per_day_mvbs*plot_range_day)].T,\
-                 aspect='auto',vmin=-80,vmax=-30)#,cmap=e_cmap,norm=e_norm)
+                 aspect='auto',vmin=-80,vmax=-30)
     ax[2].set_xticks(np.arange(plot_range_day)*ping_per_day_mvbs+ping_per_day_mvbs/2)
     ax[2].set_xticklabels(np.arange(plot_range_day)+plot_start_day)
     ax[2].set_xlabel('Day',fontsize=14)
