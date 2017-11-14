@@ -9,7 +9,7 @@ from matplotlib.dates import date2num,num2date
 import matplotlib.colors as colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-sys.path.insert(0,'./mi_instrument')
+sys.path.insert(0,'../mi_instrument')
 from mi.instrument.kut.ek60.ooicore import zplsc_b
 
 #from datetime import datetime
