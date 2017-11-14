@@ -403,7 +403,7 @@ def find_nearest_time_idx(all_timestamp_num,time_wanted,tolerance):
 
 
 
-def plot_echogram(V,plot_start_day,plot_range_day,day_spacing,ping_per_day_mvbs,depth_bin_size,ping_time,fig_size=(16,7)):
+def plot_echogram(V,plot_start_day,plot_range_day,day_spacing,ping_per_day_mvbs,depth_bin_size,ping_time,fig_size=(16,7),cmap_name='viridis'):
     #V = MVBS
     #plot_start_day = 1
     #plot_range_day = 21
@@ -434,7 +434,7 @@ def plot_echogram(V,plot_start_day,plot_range_day,day_spacing,ping_per_day_mvbs,
     fig,ax = plt.subplots(3,1,figsize=fig_size,sharex=True)
     for iX in range(3):
         im = ax[iX].imshow(v_mtx[iX,::-1,:],aspect='auto',\
-                           vmax=-40,vmin=-80)
+                           vmax=c_max,vmin=c_min,cmap=cmap_name)
         divider = make_axes_locatable(ax[iX])
         cax = divider.append_axes("right", size="2%", pad=0.1)
         cbar = plt.colorbar(im,cax=cax,ticks=c_ticks)
