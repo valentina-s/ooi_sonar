@@ -306,7 +306,7 @@ def raw2MVBS_daterange(date_wanted,data_path,save_path,save_fname,\
         f.close()
 
         # get MVBS
-        MVBS = get_MVBS(Sv_corr,bin_size,ping_bin_range,depth_bin_range=5)
+        MVBS = get_MVBS(Sv_corr,bin_size,ping_bin_range,depth_bin_range)
 
         # save into h5 file
         sz = MVBS.shape
