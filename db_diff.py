@@ -4,8 +4,10 @@ import os, sys, glob
 import numpy as np
 import datetime as dt
 import h5py
-from matplotlib.dates import date2num
+import matplotlib.pyplot as plt
+from matplotlib.dates import date2num,num2date
 import matplotlib.colors as colors
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 sys.path.insert(0,'./mi_instrument')
 from mi.instrument.kut.ek60.ooicore import zplsc_b
@@ -283,7 +285,8 @@ def raw2MVBS_daterange(date_wanted,data_path,save_path,save_fname,\
         sz = Sv_raw.shape
         f = h5py.File(os.path.join(save_path,'%s_Sv.h5' %save_fname),"a")
         if "Sv_raw" in f:  # if file alread exist and contains Sv mtx
-            print '-- H5 file exists, append new data mtx...'
+            print '%s  unpacking file: %s' % (dt.datetime.now().strftime('%H:%M:%S'),\
+                                              'file exists, append new data mtx...')
             # append new data
             sz_exist = f['Sv_raw'].shape  # shape of existing Sv mtx
             f['Sv_raw'].resize((sz_exist[0],sz_exist[1],sz_exist[2]+sz[2]))
@@ -295,7 +298,8 @@ def raw2MVBS_daterange(date_wanted,data_path,save_path,save_fname,\
             f['ping_time'].resize((sz_exist[2]+sz[2],))
             f['ping_time'][sz_exist[2]:] = ping_time
         else:
-            print '-- New H5 file, create new dataset...'
+            print '%s  unpacking file: %s' % (dt.datetime.now().strftime('%H:%M:%S'),\
+                                              'new H5 file, create new dataset...')
             # create dataset and save
             f.create_dataset("Sv_raw", sz, maxshape=(sz[0],sz[1],None), data=Sv_raw, chunks=True)
             f.create_dataset("Sv_corr", sz, maxshape=(sz[0],sz[1],None), data=Sv_corr, chunks=True)
@@ -399,3 +403,52 @@ def find_nearest_time_idx(all_timestamp_num,time_wanted,tolerance):
 
 
 
+def plot_echogram(V,plot_start_day,plot_range_day,day_spacing,ping_per_day_mvbs,depth_bin_size,ping_time,fig_size=(16,7)):
+    #V = MVBS
+    #plot_start_day = 1
+    #plot_range_day = 21
+
+    x_ticks_spacing = day_spacing  # spacing: in num of days
+    y_ticks_num = 5
+    y_start_idx = 1
+    y_end_idx = -2
+    c_min = -80
+    c_max = -40
+    c_ticks_spacing = 10
+
+    v_mtx = V[:,y_start_idx:y_end_idx,\
+                 ping_per_day_mvbs*(plot_start_day-1)+np.arange(ping_per_day_mvbs*plot_range_day)]
+
+    y_ticks_spacing = np.floor(v_mtx.shape[1]/(y_ticks_num-1)).astype(int)
+    y_ticks = np.arange(0,v_mtx.shape[1],y_ticks_spacing)
+    y_ticklabels = y_ticks*depth_bin_size + y_start_idx*depth_bin_size
+
+    x_ticks = np.arange(0,plot_range_day,x_ticks_spacing)*ping_per_day_mvbs
+    x_ticks_in_ping_time = np.arange(plot_start_day-1,plot_start_day-1+plot_range_day,x_ticks_spacing)*ping_per_day_mvbs
+    x_ticklabels = [num2date(xx).strftime('%m/%d') for xx in ping_time[x_ticks_in_ping_time]]
+    #x_ticklabels = [num2date(xx).strftime('%m/%d') for xx in ping_time[x_ticks[1:]]]
+    #x_ticklabels.insert(0,num2date(ping_time[x_ticks[0]]).strftime('%b-%d'))
+
+    c_ticks = np.arange(c_min,c_max+c_ticks_spacing,c_ticks_spacing)
+
+    fig,ax = plt.subplots(3,1,figsize=fig_size,sharex=True)
+    for iX in range(3):
+        im = ax[iX].imshow(v_mtx[iX,::-1,:],aspect='auto',\
+                           vmax=-40,vmin=-80)
+        divider = make_axes_locatable(ax[iX])
+        cax = divider.append_axes("right", size="2%", pad=0.1)
+        cbar = plt.colorbar(im,cax=cax,ticks=c_ticks)
+        ax[iX].set_yticks(y_ticks)
+        ax[iX].set_yticklabels(y_ticklabels,fontsize=12)
+        ax[iX].set_ylabel('Depth (m)',fontsize=14)
+        if iX==2:
+            ax[iX].set_xticks(x_ticks)
+            ax[iX].set_xticklabels(x_ticklabels,fontsize=12)
+            ax[iX].set_xlabel('Date',fontsize=14)
+        if iX==0:
+            ax[iX].set_title('38 kHz',fontsize=14)
+        elif iX==1:
+            ax[iX].set_title('120 kHz',fontsize=14)
+        else:
+            ax[iX].set_title('200 kHz',fontsize=14)
+    plt.tight_layout(h_pad=0.7)
