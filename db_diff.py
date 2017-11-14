@@ -402,21 +402,20 @@ def find_nearest_time_idx(all_timestamp_num,time_wanted,tolerance):
         return idx
 
 
+def plot_echogram(V,plot_start_day,plot_range_day,plot_param,fig_size=(16,7),cmap_name='viridis'):
 
-def plot_echogram(V,plot_start_day,plot_range_day,day_spacing,ping_per_day_mvbs,depth_bin_size,ping_time,fig_size=(16,7),cmap_name='viridis'):
-    #V = MVBS
-    #plot_start_day = 1
-    #plot_range_day = 21
+    x_ticks_spacing = plot_param["x_ticks_spacing"]  # spacing: in num of days
+    y_ticks_num = plot_param["y_ticks_num"]
+    y_start_idx = plot_param["y_start_idx"]
+    y_end_idx = plot_param["y_end_idx"]
+    c_min = plot_param["c_min"]
+    c_max = plot_param["c_max"]
+    c_ticks_spacing = plot_param["c_ticks_spacing"]
+    ping_per_day_mvbs = plot_param["ping_per_day_mvbs"]
+    depth_bin_size = plot_param["depth_bin_size"]
+    ping_time = plot_param["ping_time"]
 
-    x_ticks_spacing = day_spacing  # spacing: in num of days
-    y_ticks_num = 5
-    y_start_idx = 1
-    y_end_idx = -2
-    c_min = -80
-    c_max = -40
-    c_ticks_spacing = 10
-
-    v_mtx = V[:,y_start_idx:y_end_idx,\
+    v_mtx = V[:,y_start_idx:(V.shape[1]+y_end_idx),\
                  ping_per_day_mvbs*(plot_start_day-1)+np.arange(ping_per_day_mvbs*plot_range_day)]
 
     y_ticks_spacing = np.floor(v_mtx.shape[1]/(y_ticks_num-1)).astype(int)
