@@ -450,4 +450,7 @@ def plot_echogram(V,plot_start_day,plot_range_day,plot_param,fig_size=(16,7),cma
             ax[iX].set_title('120 kHz',fontsize=14)
         else:
             ax[iX].set_title('200 kHz',fontsize=14)
+        if plot_range_day<=20:  # if short time plot day separator
+            for dd in range(1,plot_range_day):
+                ax[iX].plot(np.array((dd,dd))*ping_per_day_mvbs,(0,v_mtx.shape[1]),'--',color=(0.8,0.8,0.8))
     plt.tight_layout(h_pad=0.7)
