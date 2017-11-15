@@ -1,4 +1,4 @@
-This work is Python 2 based. Currently we are using functionality from the [mi-instrument package](https://github.com/oceanobservatories/mi-instrument) which is works only on Python 2. It is best to create a virtual environment for the project:
+This work is Python 2 based. Currently we are using functionality from the [mi-instrument package](https://github.com/oceanobservatories/mi-instrument) which works only on Python 2. It is best to create a virtual environment for the project:
 
 `conda create -n ooi_sonar2 python=2 anaconda`
 
