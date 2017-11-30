@@ -33,12 +33,12 @@ for iF=1:10%length(files)
     idx_match_all(iF,:) = idx_match(:,2);
     W_prev = A.W(:,idx_match(:,2));
 
-    W1_all(:,iF) = A.W(:,idx_match(1,2));
-    W2_all(:,iF) = A.W(:,idx_match(2,2));
-    W3_all(:,iF) = A.W(:,idx_match(3,2));
-    W4_all(:,iF) = A.W(:,idx_match(4,2));    
+    W1_all(:,iF) = W_prev(:,1);
+    W2_all(:,iF) = W_prev(:,2);
+    W3_all(:,iF) = W_prev(:,3);
+    W4_all(:,iF) = W_prev(:,4);
 
-    V = reshape(A.W(:,idx_match(:,2)),37,144*3,4);
+    V = reshape(W_prev,37,144*3,4);
 
     figure(fig);
     for iC=1:4
