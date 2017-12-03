@@ -81,15 +81,15 @@ def plot_comp(V,n_comp,ping_per_day_mvbs,figsize_input,log_opt=1,cax_all=0,cax=n
     
     
     
-def plot_coef(W,n_comp,yscale=0):
-    plt.figure(figsize=(22,3))
+def plot_coef(W,n_comp,figsize_input=(22,3),log_opt=0):
+    plt.figure(figsize=figsize_input)
     W[W==0] = sys.float_info.epsilon
     labels = [str(x) for x in range(n_comp)]
     for w, label in zip(W.T, labels):
         plt.plot(range(1,len(w)+1),w, label=label,linewidth=2)
     plt.legend()
     plt.xticks(range(W.shape[0]))
-    if yscale==1:
+    if log_opt==1:
         plt.yscale('log')
     plt.xlim([0,W.shape[0]])
     #plt.savefig(os.path.join(save_path,save_fname))
