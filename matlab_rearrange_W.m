@@ -14,18 +14,28 @@ files = dir(fullfile(data_path,'palm_nmf_r3_*.mat'));
 
 A = load(fullfile(data_path,files(1).name));
 
-idx_match = nan(size(A.W,2),2);
-idx_match_all = nan(length(files),size(A.W,2));
+n_comp = size(A.W,2);
+
+idx_match = nan(n_comp,2);
+idx_match_all = nan(length(files),n_comp);
 fig = figure('position',[100,200,500,600]);
 for iF=1:length(files)
     A = load(fullfile(data_path,files(iF).name));
 
     s = strsplit(files(iF).name,'.mat');
-    eta = str2double(s{1}(16:end));
+    
+    % distinguish if beta or eta param first in filename
+    if strcmp(s{1}(13),'e')
+        eta = str2double(s{1}(16:end));
+    else
+        betaW = str2double(s{1}(18:20));
+        betaH = str2double(s{1}(27:29));
+        eta = str2double(s{1}(34:end));
+    end
 
     if iF~=1
         RHO = corr(W_prev,A.W);
-        for iC=1:size(A.W,2)
+        for iC=1:n_comp
             [~,idx] = max(RHO(:));
             [idx_match(iC,1),idx_match(iC,2)] = ind2sub(size(RHO),idx);
             RHO(idx_match(iC,1),:) = -Inf;
@@ -33,8 +43,8 @@ for iF=1:length(files)
         end
         idx_match = sortrows(idx_match);
     else
-        idx_match(:,1) = [1:size(A.W,2)]';
-        idx_match(:,2) = [1:size(A.W,2)]';
+        idx_match(:,1) = [1:n_comp]';
+        idx_match(:,2) = [1:n_comp]';
     end
     idx_match_all(iF,:) = idx_match(:,2);
     W_prev = A.W(:,idx_match(:,2));
@@ -42,16 +52,16 @@ for iF=1:length(files)
     W1_all(:,iF) = W_prev(:,1);
     W2_all(:,iF) = W_prev(:,2);
     W3_all(:,iF) = W_prev(:,3);
-    if size(A.W,2)==4
+    if n_comp==4
         W4_all(:,iF) = W_prev(:,4);
     end
 
-    V = reshape(W_prev,37,144*3,size(A.W,2));
+    V = reshape(W_prev,37,144*3,n_comp);
 
     figure(fig);
 %     figure;
-    for iC=1:size(A.W,2)
-        subplot(size(A.W,2)+2,1,iC)
+    for iC=1:n_comp
+        subplot(n_comp+2,1,iC)
         imagesc(V(:,:,iC))
         axis xy
         colorbar
@@ -62,9 +72,11 @@ for iF=1:length(files)
         plot([144,144],[0,37],'w--','linewidth',1);
         plot([288,288],[0,37],'w--','linewidth',1);
     end
-    subplot(size(A.W,2)+2,1,size(A.W,2)+(1:2))
+    subplot(n_comp+2,1,n_comp+(1:2))
     plot(A.H(idx_match(:,2),:)','linewidth',2);
-    legend('1','2','3','4');
+    legend(num2str([1:n_comp]'))
 
-    saveas(gcf,fullfile(data_path,sprintf('palm_nmf_eta%06.2f.png',eta)),'png');
+    saveas(gcf,fullfile(data_path,sprintf('%s.png',s{1})),'png');
 end
+
+
