@@ -408,6 +408,7 @@ def plot_echogram(V,plot_start_day,plot_range_day,plot_param,fig_size=(16,7),cma
     y_ticks_num = plot_param["y_ticks_num"]
     y_start_idx = plot_param["y_start_idx"]
     y_end_idx = plot_param["y_end_idx"]
+    y_offset_idx = plot_param["y_offset_idx"]
     c_min = plot_param["c_min"]
     c_max = plot_param["c_max"]
     c_ticks_spacing = plot_param["c_ticks_spacing"]
@@ -420,7 +421,7 @@ def plot_echogram(V,plot_start_day,plot_range_day,plot_param,fig_size=(16,7),cma
 
     y_ticks_spacing = np.floor(v_mtx.shape[1]/(y_ticks_num-1)).astype(int)
     y_ticks = np.arange(0,v_mtx.shape[1],y_ticks_spacing)
-    y_ticklabels = y_ticks*depth_bin_size + y_start_idx*depth_bin_size
+    y_ticklabels = y_ticks*depth_bin_size + (y_start_idx+y_offset_idx)*depth_bin_size
 
     x_ticks = np.arange(0,plot_range_day,x_ticks_spacing)*ping_per_day_mvbs
     x_ticks_in_ping_time = np.arange(plot_start_day-1,plot_start_day-1+plot_range_day,x_ticks_spacing)*ping_per_day_mvbs
@@ -435,22 +436,22 @@ def plot_echogram(V,plot_start_day,plot_range_day,plot_param,fig_size=(16,7),cma
         im = ax[iX].imshow(v_mtx[iX,::-1,:],aspect='auto',\
                            vmax=c_max,vmin=c_min,cmap=cmap_name)
         divider = make_axes_locatable(ax[iX])
-        cax = divider.append_axes("right", size="2%", pad=0.1)
+        cax = divider.append_axes("right", size="1%", pad=0.1)
         cbar = plt.colorbar(im,cax=cax,ticks=c_ticks)
         ax[iX].set_yticks(y_ticks)
-        ax[iX].set_yticklabels(y_ticklabels,fontsize=12)
-        ax[iX].set_ylabel('Depth (m)',fontsize=14)
+        ax[iX].set_yticklabels(y_ticklabels,fontsize=14)
+        ax[iX].set_ylabel('Depth (m)',fontsize=16)
         if iX==2:
             ax[iX].set_xticks(x_ticks)
-            ax[iX].set_xticklabels(x_ticklabels,fontsize=12)
-            ax[iX].set_xlabel('Date',fontsize=14)
-        if iX==0:
-            ax[iX].set_title('38 kHz',fontsize=14)
-        elif iX==1:
-            ax[iX].set_title('120 kHz',fontsize=14)
-        else:
-            ax[iX].set_title('200 kHz',fontsize=14)
+            ax[iX].set_xticklabels(x_ticklabels,fontsize=14)
+            ax[iX].set_xlabel('Date',fontsize=16)
+        #if iX==0:
+        #    ax[iX].set_title('38 kHz',fontsize=14)
+        #elif iX==1:
+        #    ax[iX].set_title('120 kHz',fontsize=14)
+        #else:
+        #    ax[iX].set_title('200 kHz',fontsize=14)
         if plot_range_day<=20:  # if short time plot day separator
             for dd in range(1,plot_range_day):
                 ax[iX].plot(np.array((dd,dd))*ping_per_day_mvbs,(0,v_mtx.shape[1]),'--',color=(0.8,0.8,0.8))
-    plt.tight_layout(h_pad=0.7)
+    plt.tight_layout(h_pad=0.1)
