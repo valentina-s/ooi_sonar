@@ -4,13 +4,15 @@ clear
 
 if ismac
     data_path = '/Users/wujung/Downloads/';
+    save_path = '/Users/wujung/Downloads/';
     addpath /Users/wujung/code/ooi_sonar/
 else
-    data_path = '/media/wu-jung/wjlee_apl_2/ooi_zplsc_new/';
+    data_path = '/media/wu-jung/wjlee_apl_2/ooi_zplsc_palm_nmf/';
+    save_path = '/media/wu-jung/wjlee_apl_2/ooi_zplsc_palm_nmf/';
     addpath ~/internal_2tb/ooi_sonar/ooi_sonar_code/
 end
 
-files = dir(fullfile(data_path,'palm_nmf_r3_*.mat'));
+files = dir(fullfile(data_path,'palm_nmf_r4_eta*.mat'));
 
 A = load(fullfile(data_path,files(1).name));
 
@@ -76,7 +78,7 @@ for iF=1:length(files)
     plot(A.H(idx_match(:,2),:)','linewidth',2);
     legend(num2str([1:n_comp]'))
 
-    saveas(gcf,fullfile(data_path,sprintf('%s.png',s{1})),'png');
+    saveas(gcf,fullfile(save_path,sprintf('%s.png',s{1})),'png');
 end
 
 
