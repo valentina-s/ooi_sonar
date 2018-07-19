@@ -5,7 +5,7 @@ clear
 addpath ~/internal_2tb/ooi_sonar/ooi_sonar_code/
 
 data_path = '/media/wu-jung/wjlee_apl_2/ooi_zplsc_current/';
-save_path = '/media/wu-jung/wjlee_apl_2/ooi_zplsc_palm_nmf/';
+save_path = '/media/wu-jung/wjlee_apl_2/ooi_zplsc_palm_nmf_2018/';
 data_file = '20150817-20151017_MVBS_PCPcleaned.h5';
 
 cd(data_path)  % has to switch folder to ensure reading h5 files correctly
