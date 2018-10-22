@@ -1,28 +1,26 @@
-This work is Python 2 based. Currently we are using functionality from the [mi-instrument package](https://github.com/oceanobservatories/mi-instrument) which works only on Python 2. It is best to create a virtual environment for the project:
+This work is being converted from an old state which used lots of Python 2 from the [mi-instrument package](https://github.com/oceanobservatories/mi-instrument) to a new state which uses Python 3. It's currently undergoing major changes at the moment, so please check back in Nov 2018 for a cleaner and more functional repo.
 
-`conda create -n ooi_sonar2 python=2 anaconda`
+To create a conda environment for this project:
+
+`conda env create -f environment.yml -n py3-sonar`
+
+To make an ipython kernel hook, use:
+
+`python -m ipykernel install --user --name py3-sonar`
 
 To activate the environment run:
 
-`source activate ooi_sonar2`
-
-From within the environment install the dependencies:
-
-`pip install -r requirements_clean.txt`
+`source activate py3-sonar`
 
 To run the notebooks run:
-
-`cd notebooks`
-
-`jupyter notebook`
-
+```shell
+$ cd notebooks
+$ jupyter notebook
+```
 and navigate to the notebooks of interest.
 
 In the notebooks you will have to change the paths to where you have downloaded the dataset.
 
-Once you are finished: 
+Once you are finished, to return to the base environment:
 
 `source deactivate`.
-
-
-

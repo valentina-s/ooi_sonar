@@ -1,0 +1,11 @@
+name: infotaxis
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - matplotlib
+  - numpy
+  - pandas
+  - python=3
+  - scipy
+  - xarray
