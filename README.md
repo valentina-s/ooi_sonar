@@ -1,4 +1,4 @@
-This work is being converted from an old state which used lots of Python 2 from the [mi-instrument package](https://github.com/oceanobservatories/mi-instrument) to a new state which uses Python 3. It's currently undergoing major changes at the moment, so please check back in Nov 2018 for a cleaner and more functional repo.
+This work is undergoing major changes from an old state which used lots of Python 2 from the [mi-instrument package](https://github.com/oceanobservatories/mi-instrument) to a new state which uses Python 3. Please check back in Nov 2018 for a cleaner and more functional repo.
 
 To create a conda environment for this project:
 
