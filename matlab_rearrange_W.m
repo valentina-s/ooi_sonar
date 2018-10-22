@@ -7,12 +7,12 @@ if ismac
     save_path = '/Users/wujung/Downloads/';
     addpath /Users/wujung/code/ooi_sonar/
 else
-    data_path = '/media/wu-jung/wjlee_apl_2/ooi_zplsc_palm_nmf/';
-    save_path = '/media/wu-jung/wjlee_apl_2/ooi_zplsc_palm_nmf/';
+    data_path = '/media/wu-jung/wjlee_apl_2/ooi_zplsc_palm_nmf_2018/';
+    save_path = '/media/wu-jung/wjlee_apl_2/ooi_zplsc_palm_nmf_2018/';
     addpath ~/internal_2tb/ooi_sonar/ooi_sonar_code/
 end
 
-files = dir(fullfile(data_path,'palm_nmf_r4_eta*.mat'));
+files = dir(fullfile(data_path,'palm_nmf_r3_*.mat'));
 
 A = load(fullfile(data_path,files(1).name));
 
