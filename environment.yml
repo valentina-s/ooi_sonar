@@ -1,4 +1,4 @@
-name: infotaxis
+name: sonar_nmf_tensor
 channels:
   - conda-forge
   - defaults
@@ -9,3 +9,6 @@ dependencies:
   - python=3
   - scipy
   - xarray
+  - scikit-learn
+  - tensorly
+  - scikit-image
