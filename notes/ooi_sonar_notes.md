@@ -217,7 +217,7 @@ Sv[n+1] = (power_data_dict[n+1].T \
 
 
 ## 2017/10/10
-* `MVBS NMF and dB-diff (during development).ipynb` contains routines for loading a single file, estimating noise, remove noise from unpacked power data, calculate MVBS, and conduct dB-differencing using the criteria as in `Freq-differencing 20171009.ipynb`. Note that the results are not very clean: the majority of the scatterers are classified as 'zooplankton' and very little 'fish' were classified. 
+* `MVBS NMF and dB-diff (during development).ipynb` contains routines for loading a single file, estimating noise, remove noise from unpacked power data, calculate MVBS, and conduct dB-differencing using the criteria as in `Freq-differencing 20171009.ipynb`. Note that the results are not very clean: the majority of the scatterers are classified as 'zooplankton' and very little 'fish' were classified.
 
 * **NEED TO UPDATE**: Need to clean up code for unpacking `.raw` data and remove dependency from `mi-instruments`.
 
@@ -226,8 +226,20 @@ Sv[n+1] = (power_data_dict[n+1].T \
 * Realized that for stationary echosounders the best way to estimate noise might be to use the lowest noise point throughout each day, instead of every X pings. In `MVBS NMF and dB-diff (during development).ipynb` can clearly see how the DVM impacts the estimated noise level, and using those when there's much less zooplankton present in the water column would help getting a better noise estimate.
 
 
-
-
+## 2018/10/28
+* Mess around with `parafac` under `tensorly.decomposition` to factorize the same 62 days of OOI echosounder data.
+	- results saved in repo `tensors-in-CVML`
+	- used `parafac` because it seems more interpretable???
+	- not sure how to set the rank, but by looking at the reconstruction results, the pattern of correlation across different days and different rank (see bottom of notebook `tensorly_test_ooi_sonar_201810.ipynb`) it seems that rank = 4 or 5 would capture most of the features and produce somewhat consistent results; although note the difference in the confusion matrix in x=40-50, y=25-35 range.
+* great review for tensor decomposition: [Kolda and Bader 2009](https://www.sandia.gov/~tgkolda/pubs/pubfiles/TensorReview.pdf)
+	- mentioned CORCONDIA to estimate tensor rank
+	- [This script](https://github.com/alessandrobessi/corcondia/blob/master/coreconsistency.py) seems to have implemented CORCONDIA
+* some random things in tensorflow that seems relevant
+	- tensor flow [intro](https://www.python-course.eu/tensor_flow_introduction.php)
+	- [`tf.rank`](https://www.tensorflow.org/api_docs/python/tf/rank)
+* [`scikit-tensor`](https://github.com/mnick/scikit-tensor)
+	- it's readme links to 2 matlab tensor libraries
+* [LRSLibrart: Low-Rank and Sparse tools](https://github.com/andrewssobral/lrslibrary)
 
 
 ## TO-DO
@@ -295,7 +307,7 @@ Separation Using Non-Negative Factorizations](https://ccrma.stanford.edu/~gautha
 ## REFERENCES
 * Recent paper about krill Sv38 and Sv120 ratio: [Volume backscattering strength of ice krill (Euphausia crystallorophias) in the Amundsen Sea coastal polynya](http://www.sciencedirect.com/science/article/pii/S0967064515002106)
 * Correlate backscatteing with oceanographic background changes [Acoustic backscatter observations with implications for seasonal and vertical migrations of zooplankton and nekton in the Amundsen shelf (Antarctica)](http://www.sciencedirect.com/science/article/pii/S0272771414003485)
-* [Multi-resolution dynamic mode decomposition](https://arxiv.org/pdf/1506.00564.pdf) 
+* [Multi-resolution dynamic mode decomposition](https://arxiv.org/pdf/1506.00564.pdf)
 * [Subspace tracking](http://web.eecs.umich.edu/~girasole/?page_id=190) algorithms
 
 ## Misc Python notes
