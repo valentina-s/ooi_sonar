@@ -1,4 +1,4 @@
-name: sonar_nmf_tensor
+name: sonar_nmf
 channels:
   - conda-forge
   - defaults
@@ -6,9 +6,11 @@ dependencies:
   - matplotlib
   - numpy
   - pandas
-  - python=3
+  - python=3.6.6
   - scipy
   - xarray
   - scikit-learn
   - tensorly
   - scikit-image
+  - ipykernel
+  
