@@ -1,11 +1,11 @@
-% 2019 04 26  Search for parameter combination that minimizes objective
+% 2019 04 26  Sweep through different rank using shuffled data
 
 
 % Set paths
 if ismac && isunix  % if on Mac
     addpath /Users/wu-jung/code_git/ooi_sonar/palm_nmf_matlab
     data_path = '/Users/wu-jung/code_git/ooi_sonar/sample_data/';
-    save_path = '/User/wu-jung/code_git/ooi_sonar/decomp_results/';
+    save_path = '/Users/wu-jung/code_git/ooi_sonar/decomp_results/';
 elseif isunix  % if on Linux
     addpath ~/code_git/ooi_sonar/palm_nmf_matlab
     data_path = '~/code_git/ooi_sonar/sample_data/';
@@ -33,12 +33,19 @@ ping_time = h5read(data_file,'/ping_time');
 ping_per_day_mvbs = h5read(data_file,'/ping_per_day_mvbs');
 depth_bin_num = 37;
 
-
 LL = L-min(L(:));  % make it non-negative
 
 
+% Shuffle observation
+rng(168)
+for ii=1:size(LL,2)
+    rand_seq(:,ii) = randperm(size(LL,1));
+    LL_perm(:,ii) = LL(rand_seq(:,ii),ii);
+end
+
+
 % Run smooth NMF, sweep through different rank
-rank_all = [5,8,11,14,17,18,20:30];
+rank_all = 1:30;
 
 len = length(rank_all);
 f1 = 'r';
@@ -50,13 +57,13 @@ v3 = mat2cell(0.1*ones(len,1),ones(len,1));
 f4 = 'betaH';
 v4 = mat2cell(0.1*ones(len,1),ones(len,1));
 f5 = 'smoothness';
-v5 = mat2cell(1000*ones(len,1),ones(len,1));
+v5 = mat2cell(10*ones(len,1),ones(len,1));
 params_all = struct(f1,v1,f2,v2,f3,v3,f4,v4,f5,v5);
 
 parfor rr = 1:length(rank_all)
     fprintf('rank = %d\n', rank_all(rr));
-    [W, H, objective, iter_times] = palm_nmf(LL, params_all(rr));
-    save_file = sprintf('%s_r%02d_betaW%2.2f_betaH%2.2f_smoothness%6.2f.mat', ...
+    [W, H, objective, iter_times] = palm_nmf(LL_perm, params_all(rr));
+    save_file = sprintf('%s_r%02d_betaW%2.2f_betaH%2.2f_smoothness%08.2f.mat', ...
         sname, rank_all(rr), ...
         params_all(rr).betaW, params_all(rr).betaH, ...
         params_all(rr).smoothness);
@@ -67,4 +74,5 @@ parfor rr = 1:length(rank_all)
     m.objective = objective;
     m.iter_times = iter_times;
     m.params = params_all(rr);
+    m.rand_seq = rand_seq;
 end

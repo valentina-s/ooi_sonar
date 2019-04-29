@@ -5,11 +5,11 @@
 if ismac && isunix  % if on Mac
     addpath /Users/wu-jung/code_git/ooi_sonar/palm_nmf_matlab
     data_path = '/Users/wu-jung/code_git/ooi_sonar/sample_data/';
-    save_path = '/User/wu-jung/code_git/ooi_sonar/decomp_results/';
+    save_path = '/Users/wu-jung/code_git/ooi_sonar/decomp_results/';
 elseif isunix  % if on Linux
     addpath ~/code_git/ooi_sonar/palm_nmf_matlab
     data_path = '~/code_git/ooi_sonar/sample_data/';
-    save_path = '~/code_git/ooi_sonar/decomp_results/';
+    save_path = '~/code_git/ooi_sonar/decomp_results_eapeat/';
 end
 data_file = '20150817-20151017_MVBS_PCPcleaned.h5';
 
@@ -37,8 +37,9 @@ depth_bin_num = 37;
 LL = L-min(L(:));  % make it non-negative
 
 
-% Run smooth NMF, sweep through different rank
-rank_all = [5,8,11,14,17,18,20:30];
+% Run smooth NMF, sweep through different rank, repeat many times
+repeat_num = 50;
+rank_all = 3:5;
 
 len = length(rank_all);
 f1 = 'r';
@@ -50,21 +51,24 @@ v3 = mat2cell(0.1*ones(len,1),ones(len,1));
 f4 = 'betaH';
 v4 = mat2cell(0.1*ones(len,1),ones(len,1));
 f5 = 'smoothness';
-v5 = mat2cell(1000*ones(len,1),ones(len,1));
+v5 = mat2cell(100*ones(len,1),ones(len,1));
 params_all = struct(f1,v1,f2,v2,f3,v3,f4,v4,f5,v5);
 
-parfor rr = 1:length(rank_all)
-    fprintf('rank = %d\n', rank_all(rr));
-    [W, H, objective, iter_times] = palm_nmf(LL, params_all(rr));
-    save_file = sprintf('%s_r%02d_betaW%2.2f_betaH%2.2f_smoothness%6.2f.mat', ...
-        sname, rank_all(rr), ...
-        params_all(rr).betaW, params_all(rr).betaH, ...
-        params_all(rr).smoothness);
-    save_file = fullfile(save_path, save_file);
-    m = matfile(save_file,'writable',true);
-    m.W = W;
-    m.H = H;
-    m.objective = objective;
-    m.iter_times = iter_times;
-    m.params = params_all(rr);
+for nn = 1:repeat_num
+    parfor rr = 1:length(rank_all)
+        fprintf('rank = %d\n', rank_all(rr));
+        [W, H, objective, iter_times] = palm_nmf(LL, params_all(rr));
+        save_file = sprintf('%s_r%02d_betaW%2.2f_betaH%2.2f_smoothness%6.2f_rep%04d.mat', ...
+                            sname, rank_all(rr), ...
+                            params_all(rr).betaW, params_all(rr).betaH, ...
+                            params_all(rr).smoothness, ...
+                            nn);
+        save_file = fullfile(save_path, save_file);
+        m = matfile(save_file,'writable',true);
+        m.W = W;
+        m.H = H;
+        m.objective = objective;
+        m.iter_times = iter_times;
+        m.params = params_all(rr);
+    end
 end

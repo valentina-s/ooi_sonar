@@ -5,11 +5,11 @@
 if ismac && isunix  % if on Mac
     addpath /Users/wu-jung/code_git/ooi_sonar/palm_nmf_matlab
     data_path = '/Users/wu-jung/code_git/ooi_sonar/sample_data/';
-    save_path = '/User/wu-jung/code_git/ooi_sonar/decomp_results/';
+    save_path = '/User/wu-jung/code_git/ooi_sonar/decomp_results_smoothness/';
 elseif isunix  % if on Linux
     addpath ~/code_git/ooi_sonar/palm_nmf_matlab
     data_path = '~/code_git/ooi_sonar/sample_data/';
-    save_path = '~/code_git/ooi_sonar/decomp_results/';
+    save_path = '~/code_git/ooi_sonar/decomp_results_smoothness';
 end
 data_file = '20150817-20151017_MVBS_PCPcleaned.h5';
 
@@ -37,12 +37,12 @@ depth_bin_num = 37;
 LL = L-min(L(:));  % make it non-negative
 
 
-% Run smooth NMF, sweep through different rank
-rank_all = [5,8,11,14,17,18,20:30];
+% Run smooth NMF, sweep through different smoothness
+sm_all = [0,1,2,5,10,20,50,100,200,500,1000,2000,5000,10000];
 
-len = length(rank_all);
+len = length(sm_all);
 f1 = 'r';
-v1 = mat2cell(rank_all',ones(len,1));
+v1 = mat2cell(3*ones(len,1),ones(len,1));
 f2 = 'max_iter';
 v2 = mat2cell(500*ones(len,1),ones(len,1));
 f3 = 'betaW';
@@ -50,14 +50,14 @@ v3 = mat2cell(0.1*ones(len,1),ones(len,1));
 f4 = 'betaH';
 v4 = mat2cell(0.1*ones(len,1),ones(len,1));
 f5 = 'smoothness';
-v5 = mat2cell(1000*ones(len,1),ones(len,1));
+v5 = mat2cell(sm_all',ones(len,1));
 params_all = struct(f1,v1,f2,v2,f3,v3,f4,v4,f5,v5);
 
-parfor rr = 1:length(rank_all)
-    fprintf('rank = %d\n', rank_all(rr));
+parfor rr = 1:length(sm_all)
+    fprintf('smoothness = %d\n', sm_all(rr));
     [W, H, objective, iter_times] = palm_nmf(LL, params_all(rr));
-    save_file = sprintf('%s_r%02d_betaW%2.2f_betaH%2.2f_smoothness%6.2f.mat', ...
-        sname, rank_all(rr), ...
+    save_file = sprintf('%s_r%02d_betaW%2.2f_betaH%2.2f_smoothness%09.2f.mat', ...
+        sname, params_all(rr).r, ...
         params_all(rr).betaW, params_all(rr).betaH, ...
         params_all(rr).smoothness);
     save_file = fullfile(save_path, save_file);
