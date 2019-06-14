@@ -53,6 +53,7 @@ f5 = 'smoothness';
 v5 = mat2cell(sm_all',ones(len,1));
 params_all = struct(f1,v1,f2,v2,f3,v3,f4,v4,f5,v5);
 
+
 parfor rr = 1:length(sm_all)
     fprintf('smoothness = %d\n', sm_all(rr));
     [W, H, objective, iter_times] = palm_nmf(LL, params_all(rr));

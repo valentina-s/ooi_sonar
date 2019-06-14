@@ -5,7 +5,7 @@
 if ismac && isunix  % if on Mac
     addpath /Users/wu-jung/code_git/ooi_sonar/palm_nmf_matlab
     data_path = '/Users/wu-jung/code_git/ooi_sonar/sample_data/';
-    save_path = '/User/wu-jung/code_git/ooi_sonar/decomp_results/';
+    save_path = '/Users/wu-jung/code_git/ooi_sonar/decomp_results/';
 elseif isunix  % if on Linux
     addpath ~/code_git/ooi_sonar/palm_nmf_matlab
     data_path = '~/code_git/ooi_sonar/sample_data/';
@@ -25,9 +25,6 @@ pname = mfilename('fullpath');
 L = h5read(data_file,'/L');
 L_sep = h5read(data_file,'/L_sep');
 L_plot = h5read(data_file,'/L_plot');
-% S = h5read(data_file,'/S');
-% S_sep = h5read(data_file,'/S_sep');
-% S_plot = h5read(data_file,'/S_plot');
 depth_bin_size = h5read(data_file,'/depth_bin_size');
 ping_time = h5read(data_file,'/ping_time');
 ping_per_day_mvbs = h5read(data_file,'/ping_per_day_mvbs');
