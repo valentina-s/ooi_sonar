@@ -36,7 +36,7 @@ LL = L-min(L(:));  % make it non-negative
 
 
 % Run smooth NMF, sweep through different smoothness
-sm_all = [1e3,1e6];
+sm_all = [1e2,1e4,1e6,1e8];
 
 len = length(sm_all);
 f1 = 'r';
