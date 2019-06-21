@@ -1,6 +1,7 @@
 % Code temporarily lifted from https://github.com/raimon-fa/palm-nmf/blob/master/palm_nmf.m
 
-function [W, H, objective, iter_times, W_init, H_init, W_steps, H_steps] = palm_nmf_detail(V, params)
+function [W, H, objective, iter_times, W_init, H_init, W_steps, ...
+          H_steps] = palm_nmf_detail(V, params, varargin)
 % Algorithm for NMF with eucidian norm as objective function and 
 %L1 constraint on W for sparse paterns and Tikhonov regularization 
 %for smooth activation coefficients.
@@ -49,6 +50,18 @@ function [W, H, objective, iter_times, W_init, H_init, W_steps, H_steps] = palm_
 % W_steps: W in all iterations
 % H_steps: H in all iterations
 
+
+% Check input for iterations to save
+if nargin==3  % if iteration steps are specified
+    iter_save = varargin{1};
+    fprintf('Iterations to save are: %s\n',...
+            strjoin(cellstr(num2str(iter_save(:))),','));
+else
+    iter_save = [];  % save all steps
+    disp('Save all iterations')
+end
+
+% Get other parameters
 m = size(V, 1);
 n = size(V, 2);
 
@@ -107,10 +120,17 @@ betaW = params.betaW;
 objective = zeros(params.max_iter,1);
 iter_times = zeros(params.max_iter,1);
 
+%%% Initialize outputs for saving iterations
 H_init = H;  % initial H
 W_init = W;  % initial W
-H_steps = zeros(r, n, params.max_iter);  % H size: [m x r]
-W_steps = zeros(m, r, params.max_iter);  % W size: [r x n]
+if ~isempty(iter_save)  % only save specified iterations
+    H_steps = zeros(r, n, length(iter_save));  % H size: [m x r]
+    W_steps = zeros(m, r, length(iter_save));  % W size: [r x n]
+else
+    H_steps = zeros(r, n, params.max_iter);  % H size: [m x r]
+    W_steps = zeros(m, r, params.max_iter);  % W size: [r x n]
+end
+save_iter_count = 1;  % counter for saved iterations
 
 tic
 if lambda == 0 && eta == 0
@@ -120,59 +140,73 @@ if lambda == 0 && eta == 0
     gamma1 = gamma1 / 2;
     gamma2 = gamma2 / 2;
     for it = 1:params.max_iter
-    % 1. W updates %%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % 1. W updates %%%%%%%%%%%%%%%%%%%%%%%%%%%
         c = gamma1 * 2 * norm(H*H','fro');    
         % gradient descend
         z1 = W - (1 / c) * 2 * ((W * H - V) * H');
         % proximity operator
         z1 = max(z1, 0);
         W = z1;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % 2. H update %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % 2. H update %%%%%%%%%%%%%%%%%%%%%%%%%%%%
         d = gamma2 * 2 * (norm(W*W','fro'));
         % gradient descend
         z2 = H - (1 / d) * 2 * (W' * (W * H - V));   
         % proximity operator 
         z2 = max(z2,0);
         H = z2;    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Compute the objective function %%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Compute the objective function %%%%%%%%%%
         objective(it) = norm(W * H - V,'fro')^2;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         iter_times(it) = toc;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Save H and W step
-        H_steps(:,:,it) = H;
-        W_steps(:,:,it) = W;
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Save H and W step
+        if ~isempty(iter_save)
+            if ismember(it, iter_save)
+                H_steps(:,:,save_iter_count) = H;
+                W_steps(:,:,save_iter_count) = W;
+            end
+        else
+            H_steps(:,:,it) = H;
+            W_steps(:,:,it) = W;
+        end
     end
 elseif lambda > 0 && eta == 0
     %%% SPARSE NMF %%%
     for it = 1:params.max_iter
-    % 1. W updates %%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % 1. W updates %%%%%%%%%%%%%%%%%%%%%%%%%%%
         c = gamma1 * 2 * norm(H*H','fro');    
         % gradient descend
         z1 = W - (1 / c) * 2 * ((W * H - V) * H');
         % proximity operator
         z1 = max(z1 - 2 * lambda / c, 0);
         W = z1;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % 2. H update %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % 2. H update %%%%%%%%%%%%%%%%%%%%%%%%%%%%
         d = gamma2 * 2 * (norm(W*W','fro') + betaH);
         % gradient descend
         z2 = H - (1 / d) * 2 * (W' * (W * H - V) + betaH * H);   
         % proximity operator 
         z2(z2 < 0) = 0;
         H = z2;    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Compute the objective function %%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Compute the objective function %%%%%%%%%%
         objective(it) = norm(W * H - V,'fro')^2 + ...
             lambda * sum(sum(abs(W))) + betaH * norm(H,'fro');
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         iter_times(it) = toc;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Save H and W step
-        H_steps(:,:,it) = H;
-        W_steps(:,:,it) = W;
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Save H and W step
+        if ~isempty(iter_save)
+            if ismember(it, iter_save)
+                H_steps(:,:,save_iter_count) = H;
+                W_steps(:,:,save_iter_count) = W;
+            end
+        else
+            H_steps(:,:,it) = H;
+            W_steps(:,:,it) = W;
+        end
     end
 elseif lambda == 0 && eta > 0
     %%% SMOOTH NMF %%%
@@ -182,31 +216,38 @@ elseif lambda == 0 && eta > 0
     TTp = T*T';
     TTp_norm = norm(TTp,'fro');
     for it = 1:params.max_iter
-    % 1. W updates %%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % 1. W updates %%%%%%%%%%%%%%%%%%%%%%%%%%%
         c = gamma1 * 2 * (norm(H*H','fro') + betaW);    
         % gradient descend
         z1 = W - (1 / c) * 2 * ((W * H - V) * H' + betaW * W);
         % proximity operator 
         z1 = max(z1, 0);
         W = z1;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % 2. H update %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % 2. H update %%%%%%%%%%%%%%%%%%%%%%%%%%%%
         d = gamma2 * 2 * (norm(W*W','fro') + eta * TTp_norm);
         % gradient descend
         z2 = H - (1 / d) * 2 * (W' * (W * H - V) + eta * (H * TTp));   
         % proximity operator 
         z2 = max(z2,0);
         H = z2;    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Compute the objective function %%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Compute the objective function %%%%%%%%%%
         objective(it) = norm(W * H - V,'fro')^2 + ...
             eta * norm(H * T,'fro')^2 + betaW * norm(W,'fro'); 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         iter_times(it) = toc;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Save H and W step
-        H_steps(:,:,it) = H;
-        W_steps(:,:,it) = W;
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Save H and W step
+        if ~isempty(iter_save)
+            if ismember(it, iter_save)
+                H_steps(:,:,save_iter_count) = H;
+                W_steps(:,:,save_iter_count) = W;
+            end
+        else
+            H_steps(:,:,it) = H;
+            W_steps(:,:,it) = W;
+        end
     end  
 elseif lambda > 0 && eta > 0
     %%% SMOOTH and SPARSE NMF %%%
@@ -216,33 +257,40 @@ elseif lambda > 0 && eta > 0
     TTp = T*T';
     TTp_norm = norm(TTp,'fro');
     for it = 1:params.max_iter
-    % 1. W updates %%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % 1. W updates %%%%%%%%%%%%%%%%%%%%%%%%%%%
         c = gamma1 * 2 * (norm(H*H','fro') + betaW);    
         % gradient descend
         z1 = W - (1 / c) * 2 * ((W * H - V) * H' + betaW * W);
         % proximity operator 
         z1 = max(z1 - 2 * lambda / c, 0);
         W = z1;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % 2. H update %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % 2. H update %%%%%%%%%%%%%%%%%%%%%%%%%%%%
         d = gamma2 * 2 * (norm(W*W','fro') + eta * TTp_norm + betaH);
         % gradient descend
         z2 = H - (1 / d) * 2 * (W' * (W * H - V) + eta * (H * TTp) +...
-            betaH * H);   
+                                betaH * H);   
         % proximity operator 
         z2 = max(z2,0);
         H = z2;    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Compute the objective function %%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Compute the objective function %%%%%%%%%%
         objective(it) = norm(W * H - V,'fro')^2 + ...
             eta * norm(H * T,'fro')^2 + lambda * sum(sum(abs(W))) + ...
             betaW * norm(W,'fro') + betaH * norm(H,'fro'); 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         iter_times(it) = toc;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Save H and W step
-        H_steps(:,:,it) = H;
-        W_steps(:,:,it) = W;
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Save H and W step
+        if ~isempty(iter_save)
+            if ismember(it, iter_save)
+                H_steps(:,:,save_iter_count) = H;
+                W_steps(:,:,save_iter_count) = W;
+            end
+        else
+            H_steps(:,:,it) = H;
+            W_steps(:,:,it) = W;
+        end
     end
 else
     error('Give positive values to the parameters')
