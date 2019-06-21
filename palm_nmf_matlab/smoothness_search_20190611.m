@@ -5,11 +5,11 @@
 if ismac && isunix  % if on Mac
     addpath /Users/wu-jung/code_git/ooi_sonar/palm_nmf_matlab
     data_path = '/Users/wu-jung/code_git/ooi_sonar/sample_data/';
-    save_path = '/User/wu-jung/code_git/ooi_sonar/decomp_smoothness_revisit/';
+    save_path = '/User/wu-jung/code_git/ooi_sonar/decomp_smoothness_revisit_2e4';
 elseif isunix  % if on Linux
     addpath ~/code_git/ooi_sonar/palm_nmf_matlab
     data_path = '~/code_git/ooi_sonar/sample_data/';
-    save_path = '~/code_git/ooi_sonar/decomp_smoothness_revisit';
+    save_path = '/media/wu-jung/internal_2tb/nmf_results/decomp_smoothness_revisit_2e4';
 end
 data_file = '20150817-20151017_MVBS_PCPcleaned.h5';
 
@@ -42,7 +42,7 @@ len = length(sm_all);
 f1 = 'r';
 v1 = mat2cell(3*ones(len,1),ones(len,1));
 f2 = 'max_iter';
-v2 = mat2cell(2000*ones(len,1),ones(len,1));
+v2 = mat2cell(2e4*ones(len,1),ones(len,1));
 f3 = 'betaW';
 v3 = mat2cell(0.1*ones(len,1),ones(len,1));
 f4 = 'betaH';
