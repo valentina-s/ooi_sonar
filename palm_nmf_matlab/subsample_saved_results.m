@@ -3,16 +3,19 @@
 addpath ~/code_git/ooi_sonar/palm_nmf_matlab
 %save_path = ['/media/wu-jung/internal_2tb/nmf_results/' ...
 %             'decomp_lambda_rank_sweep_revisit_1e4'];
+%save_path = ['/media/wu-jung/internal_2tb/nmf_results/' ...
+%             'decomp_smoothness_revisit_2e4'];
 save_path = ['/media/wu-jung/internal_2tb/nmf_results/' ...
-             'decomp_smoothness_revisit_2e4'];
+             'decomp_beta_revisit_1e4'];
 
 % ss-NMF params
 rank = 3;
 sm = [1e2,1e4,1e6,1e8];
-beta = 0.1;
+beta = 0.0;
 sp = [2,5,10,20];
 %fname_pre = 'lambda_20190617_rank';
-fname_pre = 'smoothness_search_20190611';
+%fname_pre = 'smoothness_search_20190611';
+fname_pre = 'beta_20190616';
 
 % Iteration to save varies by order of magnitude
 iter_order = 0:4;

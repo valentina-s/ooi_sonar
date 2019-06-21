@@ -20,16 +20,17 @@ step_str = {'1e2','2e2','5e2','1e3','2e3','1e4'};
 
 for istep = 1:length(step_str)
     step = eval(step_str{istep});
-
+    step_idx = find(step == A.iter_save);
+    
     % H at different steps
-    H = squeeze(A.H_steps(:,:,step));
+    H = squeeze(A.H_steps(:,:,step_idx));
     for icomp=1:length(comps)
         H_lines(icomp,:,istep) = H(icomp,:);
     end
     
     % W at different steps
     fig = figure;
-    W = squeeze(A.W_steps(:,:,step));
+    W = squeeze(A.W_steps(:,:,step_idx));
     V = zeros(37,144*3,3);
     for icomp = 1:length(comps)
         V = reshape(W(:,icomp),37,144*3);
