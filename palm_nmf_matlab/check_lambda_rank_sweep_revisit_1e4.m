@@ -19,16 +19,17 @@ for ilambda = 1:length(lambda_all)
 
     for istep = 1:length(step_str)
         step = eval(step_str{istep});
+        step_idx = find(step==A.iter_save);
 
         % H at different steps
-        H = squeeze(A.H_steps(:,:,step));
+        H = squeeze(A.H_steps(:,:,step_idx));
         for icomp=1:rank
             H_lines(icomp,:,istep) = H(icomp,:);
         end
         
         % W at different steps
         fig = figure;
-        W = squeeze(A.W_steps(:,:,step));
+        W = squeeze(A.W_steps(:,:,step_idx));
         V = zeros(37,144*3,3);
         for icomp = 1:rank
             V = reshape(W(:,icomp),37,144*3);
