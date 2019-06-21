@@ -54,13 +54,13 @@ max_iter = 5e4;
 beta = 0.1;
 
 % Iteration to save varies by order of magnitude
-iter_order = 1:4;
-iter_save = repmat(1:9,length(iter_order),1);
-for iorder = iter_order;
+iter_order = 0:4;
+iter_save = repmat(1:0.2:9.8,length(iter_order),1);
+for iorder = iter_order+1;
     iter_save(iorder,:) = iter_save(iorder,:)*10^iter_order(iorder);
 end
 iter_save = iter_save';
-iter_save = iter_save(:);
+iter_save = unique(int32(iter_save(:)));
 iter_save = iter_save(iter_save<=max_iter);
 if iter_save(end)~=max_iter
     iter_save(end+1) = max_iter;
