@@ -1,12 +1,12 @@
 % Test writing and reaiding formatted txt files
 
-save_path = '~/Downloads/';
-save_file = 'test.txt';
+save_path = '/scratch/ch153/wjl/';
+save_file = 'params_20190622_rank08.txt';
 
-rank = 3;          % rank
+rank = 8;          % rank
 betaH = 0.1;
 betaW = 0.1;
-sp = [2,5,10,20];  % sparsity (lambda)
+sp = [1,2,5,10,20,50];  % sparsity (lambda)
 max_iter = 2e4;    % max iteration
 
 % smoothness
