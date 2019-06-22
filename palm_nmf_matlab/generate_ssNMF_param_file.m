@@ -7,7 +7,7 @@ rank = 3;          % rank
 betaH = 0.1;
 betaW = 0.1;
 sp = [2,5,10,20];  % sparsity (lambda)
-max_iter = 2e4;    $ max iteration
+max_iter = 2e4;    % max iteration
 
 % smoothness
 sm_order = [5,6,7,8];
