@@ -7,6 +7,7 @@ rank = 3;          % rank
 betaH = 0.1;
 betaW = 0.1;
 sp = [2,5,10,20];  % sparsity (lambda)
+max_iter = 2e4;    $ max iteration
 
 % smoothness
 sm_order = [5,6,7,8];
@@ -19,10 +20,10 @@ sm = sm(:);
 
 % write text file
 fileID = fopen(fullfile(save_path, save_file),'w');
-fprintf(fileID,'%4s %5s %5s %9s %9s\n','rank','betaH','betaW','sparsity','smoothness');
+fprintf(fileID,'%4s %5s %5s %9s %9s %9s\n','rank','betaH','betaW','sparsity','smoothness','max_iter');
 for isp=1:length(sp)
     for ism=1:length(sm)
-        fprintf(fileID,'%4d %05.2f %05.2f %09.2e %09.2e\n',rank, betaH, betaW, sp(isp), sm(ism));
+        fprintf(fileID,'%4d %05.2f %05.2f %09.2e %09.2e %09.2e\n',rank, betaH, betaW, sp(isp), sm(ism), max_iter);
     end
 end
 fclose(fileID);
