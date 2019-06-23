@@ -166,6 +166,7 @@ if lambda == 0 && eta == 0
             if ismember(it, iter_save)
                 H_steps(:,:,save_iter_count) = H;
                 W_steps(:,:,save_iter_count) = W;
+                save_iter_count = save_iter_count+1;
             end
         else
             H_steps(:,:,it) = H;
@@ -202,6 +203,7 @@ elseif lambda > 0 && eta == 0
             if ismember(it, iter_save)
                 H_steps(:,:,save_iter_count) = H;
                 W_steps(:,:,save_iter_count) = W;
+                save_iter_count = save_iter_count+1;
             end
         else
             H_steps(:,:,it) = H;
@@ -243,6 +245,7 @@ elseif lambda == 0 && eta > 0
             if ismember(it, iter_save)
                 H_steps(:,:,save_iter_count) = H;
                 W_steps(:,:,save_iter_count) = W;
+                save_iter_count = save_iter_count+1;
             end
         else
             H_steps(:,:,it) = H;
@@ -286,6 +289,7 @@ elseif lambda > 0 && eta > 0
             if ismember(it, iter_save)
                 H_steps(:,:,save_iter_count) = H;
                 W_steps(:,:,save_iter_count) = W;
+                save_iter_count = save_iter_count+1;
             end
         else
             H_steps(:,:,it) = H;
