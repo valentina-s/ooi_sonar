@@ -29,7 +29,7 @@ addpath /home/ch153/wjl/ooi_sonar/palm_nmf_matlab
 % save_path = '~/Downloads/test_runner';
 data_path = '/home/ch153/wjl/ooi_sonar/sample_data';
 data_file = '20150817-20151017_MVBS_PCPcleaned.h5';
-save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190623';
+save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190626';
 
 % If save_path does not exist, create it
 if ~exist(save_path, 'dir')
