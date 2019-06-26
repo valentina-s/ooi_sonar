@@ -7,7 +7,7 @@ rank_all = 3:10;   % rank
 for irank=1:length(rank_all)
     
     r = rank_all(irank);
-    save_file = sprintf('params_20190622_rank%02d.txt',r);
+    save_file = sprintf('params_20190626_rank%02d.txt',r);
     
     betaH = 0.1;
     betaW = 0.1;
@@ -15,7 +15,8 @@ for irank=1:length(rank_all)
     max_iter = 2e4;    % max iteration
     
     % smoothness
-    sm_order = [5,6,7,8];
+    % sm_order = [5,6,7,8];  % runs sent on 20190623
+    sm_order = [1,2,3,4];   % runs sent on 20190626
     sm = repmat([1,2,5],length(sm_order),1);
     for iorder = 1:length(sm_order)
         sm(iorder,:) = sm(iorder,:)*10^sm_order(iorder);
