@@ -125,7 +125,7 @@ Code added to investigate the above:
 	- `check_lambda_rank_sweep_revisit_1e4.m`: check results from `lambda_20190617_rank`
 
 ## 2019/06/20
-* Modified `palm_nmf_detail.m` so that can save only a subset of iterations by passing an varargin. The  code is background compatible, so with no additional varargin all iterations are saved. This was because the memory problem for ss-NMF decomposition at higher rank is due to the large matrix that needs to be kept around when all iterations are saved (--> note this is because the results are only saved at once when the whole decomposition is finished. Consider changing it so that each step is saved incrementally --> can we do this for MAT files??).
+* Modified `palm_nmf_detail.m` so that can save only a subset of iterations by passing an varargin. The code is backward compatible, so with no additional varargin all iterations are saved. This was because the memory problem for ss-NMF decomposition at higher rank is due to the large matrix that needs to be kept around when all iterations are saved (--> note this is because the results are only saved at once when the whole decomposition is finished. Consider changing it so that each step is saved incrementally --> can we do this for MAT files??).
 * Added `subsample_saved_results.m` to subsample previously saved results to reduce space requirements, especially since at large iterations the objective varies only very slowly. The subsampling takes equal numbers of points for each order of magnitude.
 	- reduced file size in folders:
 		- `/decomp_beta`
@@ -171,3 +171,18 @@ TODO:
 ## 2019/06/26
 - Send new array jobs to run for: rank 3-10, smoothness order 1,2,3,4, sparsity 1,2,5,10,20,50. (Only the smoothness order was different from the 20190623 runs)
 - results are saved in `/ssNMF_sweep_sm_sp_20190626`
+
+## 2019/08/02
+(Revamping this work after a whole month of travel in July!)
+
+- rsync smoothness/sparsity results from NYU HPC to MURI_4TB hard drive
+	```~shell
+	rsync -avzhe ssh ch153@prince.hpc.nyu.edu:/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190623
+	rsync -avzhe ssh ch153@prince.hpc.nyu.edu:/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190626
+	```
+	confirmed that all files are downloaded
+- use `check_sm_sp_sweep.m` to plot all H and W and objective curve for all smoothness and sparsity combinations, results saved in folder `ssNMF_sweep_sm_sp_check` under MURI_4TB/nmf_results
+- set up NYU HPC to run sparsity=0 case
+- a measure to decide what smoothness parameter to use?
+	- `select_smoothness.m` calculates smoothness score (= lag-1 autocorrelation coefficient) of the *normalized* time series of H.
+	- the tapering off of smoothness score and reconstruction error is ~sm=5e7, depending on the sparsity parameter
