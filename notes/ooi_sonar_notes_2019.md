@@ -183,6 +183,11 @@ TODO:
 	confirmed that all files are downloaded
 - use `check_sm_sp_sweep.m` to plot all H and W and objective curve for all smoothness and sparsity combinations, results saved in folder `ssNMF_sweep_sm_sp_check` under MURI_4TB/nmf_results
 - set up NYU HPC to run sparsity=0 case
-- a measure to decide what smoothness parameter to use?
+- how to decide what smoothness parameter to use?
 	- `select_smoothness.m` calculates smoothness score (= lag-1 autocorrelation coefficient) of the *normalized* time series of H.
 	- the tapering off of smoothness score and reconstruction error is ~sm=5e7, depending on the sparsity parameter
+	- however when checking the actual W results, it seems that sm=5e7 produces too sparse a result and sm=5e6 or sm=1e7 is more reasonable.
+- how to decide what sparsity parameter to use?
+	- ended up plotting the location of where the minimum objective is as a function of sm and sp combinations
+	- `select_sparsity.m`
+	- it seems that there is a zoom where ssNMF would have oscillatory behavior and not monotonically decreasing with increasing iterations --> not sure why it is happening as PALM is supposed to be monotonic?

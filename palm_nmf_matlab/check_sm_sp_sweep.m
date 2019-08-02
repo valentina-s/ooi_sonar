@@ -7,20 +7,19 @@ max_iter = 2e4;
 sp_all = [1,2,5,10,20,50];
 
 % smoothness
-sm_order = [1,2,3,4];   % in folder ssNMF_sweep_sm_sp_20190626
-% sm_order = [5,6,7,8];   % in folder ssNMF_sweep_sm_sp_20190623
+% sm_order = [1,2,3,4];   % in folder ssNMF_sweep_sm_sp_20190626
+sm_order = [5,6,7,8];   % in folder ssNMF_sweep_sm_sp_20190623
 sm_all = repmat([1,2,5],length(sm_order),1);
 for iorder = 1:length(sm_order)
     sm_all(iorder,:) = sm_all(iorder,:)*10^sm_order(iorder);
 end
 sm_all = sm_all';
 sm_all = sm_all(:);
-sm_all(2) = [];
 
 step_str = {'1e2','2e2','5e2','1e3','2e3','5e3','1e4','2e4'};
 
-% data_path = '/Volumes/MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_20190623';
-data_path = '/Volumes/MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_20190626';
+data_path = '/Volumes/MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_20190623';
+% data_path = '/Volumes/MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_20190626';
 save_path = '/Volumes/MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_check';
 
 % If save_path does not exist, create it
