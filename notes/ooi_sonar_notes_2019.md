@@ -191,3 +191,25 @@ TODO:
 	- ended up plotting the location of where the minimum objective is as a function of sm and sp combinations
 	- `select_sparsity.m`
 	- it seems that there is a zoom where ssNMF would have oscillatory behavior and not monotonically decreasing with increasing iterations --> not sure why it is happening as PALM is supposed to be monotonic?
+
+
+## 2019/09/13
+(Revamping this work after another month of craziness in August!)
+
+- downloaded results from 20190802 to `MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_20190802` (sparsity=0 case)
+- set up another batch of repeated runs with the same parameter combination to check for stability when both sparsity and smoothness are constrained.
+	- the runs call `ssNMF_runner_repeat` (modified from `ssNMF_runner` by adding _rep%03d_ at the end of the filename)
+	- rank=3, smoothness=5e6, sparsity=5 (`generate_ssNMF_param_file_20190913_r03_sm5e6_sp5e0.m`)
+	- rank=4, smoothness=5e6, sparsity=10 (`generate_ssNMF_param_file_20190913_r04_sm5e6_sp1e1.m`)
+	- rank=5, smoothness=1e7, sparsity=10 (`generate_ssNMF_param_file_20190913_r05_sm1e7_sp1e1.m`)
+	- rank=10, smoothness=5e6, sparsity=10 (`generate_ssNMF_param_file_20190913_r10_sm5e6_sp1e1.m`)
+	- the results are stored under `MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_20190913`
+
+
+## 2019/09/15
+- set up repeated runs to find rank, using the same smoothness and sparsity combinations
+	- params sent: rank=2-10, smoothness=5e6, sparsity=5
+	- to generate parameter files: `generate_ssNMF_param_file_20190913_r03_sm5e6_sp5e0.m`
+	- the runs call `ssNMF_runner_normvar_repeat` (modified from `ssNMF_runner` by adding _rep%03d_ at the end of the filename and normalized the data matrix within each pixel before the decomposition)
+	- use sbatch to send scripts `run_ssNMF_array_20190915_rankXX.sh` (one script per rank)
+- temporarily renamed `ssNMF_sweep_sm_sp_20190913` to `ssNMF_sweep_sm_sp_20190913_old` because forgot to change the path in `ssNMF_runner_normvar_repeat`
