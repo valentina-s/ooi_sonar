@@ -1,4 +1,5 @@
-% 2019 06 20
+% Plot W, H and objective over selected iterations for combinations of
+% smoothness and sparsity paramemters
 
 rank_all = 3:10;
 betaH = 0.1;
@@ -7,8 +8,7 @@ max_iter = 2e4;
 sp_all = [1,2,5,10,20,50];
 
 % smoothness
-% sm_order = [1,2,3,4];   % in folder ssNMF_sweep_sm_sp_20190626
-sm_order = [5,6,7,8];   % in folder ssNMF_sweep_sm_sp_20190623
+sm_order = 1:8;
 sm_all = repmat([1,2,5],length(sm_order),1);
 for iorder = 1:length(sm_order)
     sm_all(iorder,:) = sm_all(iorder,:)*10^sm_order(iorder);
@@ -18,8 +18,8 @@ sm_all = sm_all(:);
 
 step_str = {'1e2','2e2','5e2','1e3','2e3','5e3','1e4','2e4'};
 
-data_path = '/Volumes/MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_20190623';
-% data_path = '/Volumes/MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_20190626';
+data_path1 = '/Volumes/MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_20190623';
+data_path2 = '/Volumes/MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_20190626';
 save_path = '/Volumes/MURI_4TB/nmf_results/ssNMF_sweep_sm_sp_check';
 
 % If save_path does not exist, create it
@@ -38,8 +38,13 @@ for ism = 1:length(sm_all)
             
             fname = sprintf('%s_r%02d_betaW%2.2f_betaH%2.2f_smoothness%0.2e_sparsity%0.2e_maxiter%0.2e.mat', ...
                 'ssNMF_runner', r, betaW, betaH, sm, sp, max_iter);
-            A = load(fullfile(data_path,fname));
             
+            if sm>5e4
+                A = load(fullfile(data_path1,fname));  % sm_order = 5,6,7,8
+            else
+                A = load(fullfile(data_path2,fname));  % sm_order = 1,2,3,4
+            end
+
             H_lines = zeros(r, size(A.H,2), length(step_str));
             for istep = 1:length(step_str)
                 step = eval(step_str{istep});
