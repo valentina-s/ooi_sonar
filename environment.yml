@@ -1,16 +1,17 @@
-name: sonar_nmf
+name: ooi_sonar
 channels:
   - conda-forge
   - defaults
 dependencies:
+  - h5py
+  - ipykernel
+  - jupyter
   - matplotlib
   - numpy
   - pandas
-  - python=3.6.6
+  - python
   - scipy
-  - xarray
+  - scikit-image
   - scikit-learn
   - tensorly
-  - scikit-image
-  - ipykernel
-  
+  - xarray
