@@ -213,3 +213,16 @@ TODO:
 	- the runs call `ssNMF_runner_normvar_repeat` (modified from `ssNMF_runner` by adding _rep%03d_ at the end of the filename and normalized the data matrix within each pixel before the decomposition)
 	- use sbatch to send scripts `run_ssNMF_array_20190915_rankXX.sh` (one script per rank)
 - temporarily renamed `ssNMF_sweep_sm_sp_20190913` to `ssNMF_sweep_sm_sp_20190913_old` because forgot to change the path in `ssNMF_runner_normvar_repeat`
+
+
+## 2019/10/15
+- started revising tensor notebook for OCEANS'19 conference paper
+- cannot reproduce the same non-negative parafac results as in 2018 Victoria ASA using `tensorly==0.4.4`
+- looked back to lab desktop and can reproduce results as in 2018 Victoria ASA
+	- the environment is `test_nmf`, with `tensorly==0.4.2`
+	- it appeared that the results before might not have converged
+- now using `tensorly==0.4.4` and set `tol=1e-10` to force decomposition to run very long
+	- initialized with svd
+	- it seems that the results are more interesting too:
+		- components 0 and 1 have similar frequency signature, but different daily echogram patterns and activation patterns
+		- components 1 and 2 have similar echogram pattern, but opposite frequency trends and activation patterns
