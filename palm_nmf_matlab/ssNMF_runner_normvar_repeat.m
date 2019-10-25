@@ -83,6 +83,7 @@ params.betaW = betaW;
 params.smoothness = sm;
 params.sparsity = sp;
 params.max_iter = max_iter;
+params.random_seed = 'shuffle';
 
 fprintf('%s\n', datetime('now','Format','y-M-d HH:mm:ss'));
 fprintf('  rank=%d\n  betaH=%05.2f\n  betaW=%05.2f\n', ...
@@ -97,7 +98,7 @@ save_file = ...
             params.smoothness, params.sparsity,max_iter,row_num);
 
 fprintf('%s\n', save_file);
-[W, H, objective, iter_times, W_init, H_init, W_steps, H_steps] = ...
+[W, H, objective, iter_times, W_init, H_init, W_steps, H_steps, rng_save] = ...
     palm_nmf_detail(LL, params, iter_save);
 
 save_file = fullfile(save_path, save_file);
@@ -112,6 +113,7 @@ m.objective = objective;
 m.iter_times = iter_times;
 m.iter_save = iter_save;
 m.params = params;
+m.rng = rng_save;
 m.sigma_all = sigma_all;
 
 fprintf('%s\n', datetime('now','Format','y-M-d HH:mm:ss'));
