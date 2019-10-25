@@ -30,7 +30,8 @@ addpath /home/ch153/wjl/ooi_sonar/palm_nmf_matlab
 data_path = '/home/ch153/wjl/ooi_sonar/sample_data';
 data_file = '20150817-20151017_MVBS_PCPcleaned.h5';
 % save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190626';
-save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190913';
+% save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190913';
+save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20191025_test';
 
 % If save_path does not exist, create it
 if ~exist(save_path, 'dir')
@@ -83,7 +84,7 @@ params.smoothness = sm;
 params.sparsity = sp;
 params.max_iter = max_iter;
 
-fprintf('%s\n', datetime('now','Format','y-m-d HH:mm:ss'));
+fprintf('%s\n', datetime('now','Format','y-M-d HH:mm:ss'));
 fprintf('  rank=%d\n  betaH=%05.2f\n  betaW=%05.2f\n', ...
     rank, betaH, betaW);
 fprintf('  smoothness=%09.2e\n  sparsity=%09.2e\n',sm,sp);
@@ -113,5 +114,5 @@ m.iter_save = iter_save;
 m.params = params;
 m.sigma_all = sigma_all;
 
-fprintf('%s\n', datetime('now','Format','y-m-d HH:mm:ss'));
+fprintf('%s\n', datetime('now','Format','y-M-d HH:mm:ss'));
 
