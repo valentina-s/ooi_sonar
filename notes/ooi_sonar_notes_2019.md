@@ -226,3 +226,21 @@ TODO:
 	- it seems that the results are more interesting too:
 		- components 0 and 1 have similar frequency signature, but different daily echogram patterns and activation patterns
 		- components 1 and 2 have similar echogram pattern, but opposite frequency trends and activation patterns
+
+
+## 2019/10/20-24
+- In tensorly, the function `non_negative_parafac` now is actually just a wrapper over `parafac` but lacks a few functions. Therefore changed all calls to use `parafac` but setting `non_negative=True` in the intpus.
+- Found out that by setting optional parameter `normalization_factor=True`, the NTF results will converge regardless of the initial condition (`init='svd'` or `init='random'`)
+- Now using `svd` to ensure the order of components are the same in each run.
+- Quick notebook for checking init conditions: `2019-10-21_compare-NTF-init.ipynb`
+- 2019 OCEANS analysis notebook: `2019-10-22_oceans-conf-paper-analysis.ipynb`
+- 2019 OCEANS plotting notebook: `2019-10-23_oceans-conf-paper-plot.ipynb`
+
+
+# 2019/10/25
+- Found out that the SlurmArray jobs were all started using the same initial condition, so the repetitions are identical... have to set it up right and run again.
+- Turned out that on cluster, when each Matlab job is spun up, (from [stackoverflow](https://stackoverflow.com/questions/49097078/randi-generating-the-same-result-on-a-cluster))
+
+  > the nodes you're getting the same values because the cluster nodes each act on a new instance on MATLAB, which uses rng('default') as the initialisation for the random number generator.
+
+- The easiest way to solve this is to set `rng(row_num)` since we just need each element to be different across separate runs, so that off-by-one increament of the rng is good enough to achieve that.
