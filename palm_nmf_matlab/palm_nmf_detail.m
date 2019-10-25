@@ -1,9 +1,9 @@
 % Majority of code lifted from https://github.com/raimon-fa/palm-nmf/blob/master/palm_nmf.m
 % Modified so that can save detailed output for individual steps (June 2019)
-% Added the 'random_seed' flag since it was not actually implemented before even though option exists (Oct-25 2019)
+% Took out the 'random_seed' flag since it was not actually implemented before even though option exists (Oct-25 2019)
 
 function [W, H, objective, iter_times, W_init, H_init, W_steps, ...
-	   H_steps, rng_save] = palm_nmf_detail(V, params, varargin)
+	   H_steps] = palm_nmf_detail(V, params, varargin)
 % Algorithm for NMF with eucidian norm as objective function and 
 %L1 constraint on W for sparse paterns and Tikhonov regularization 
 %for smooth activation coefficients.
@@ -26,10 +26,6 @@ function [W, H, objective, iter_times, W_init, H_init, W_steps, ...
 %
 %     conv_eps: threshold for early stopping (default: 0, 
 %                                             i.e., no early stopping)
-%     random_seed: set the random seed, if not set, use rng('default')
-%                  values should be allowed inputs of rng
-%                  for cluster jobs, set random_seed='shuffle' for true randomization
-%                   
 %     init_W:   initial setting for W (default: random; 
 %                                      either init_w or r have to be set)
 %     r: (K)       # basis functions (default: based on init_w's size;
@@ -53,7 +49,6 @@ function [W, H, objective, iter_times, W_init, H_init, W_steps, ...
 % H_init: initial H
 % W_steps: W in all iterations
 % H_steps: H in all iterations
-% rng_save: random number generator state
 
 
 % Check input for iterations to save
@@ -102,12 +97,6 @@ else
     gamma2 = params.gamma2;
 end
 
-% Deal with random number generation
-if ~isfield(params, 'random_seed')
-    params.random_seed = 'default';
-end
-rng(params.random_seed);
-rng_save = rng;
 
 % Initialize W and H
 if ~isfield(params, 'init_W')

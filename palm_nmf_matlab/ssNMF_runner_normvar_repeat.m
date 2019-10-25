@@ -1,4 +1,4 @@
-function ssNMF_runner_normvar_repeat(param_file, row_num)
+function ssNMF_runner_normvar_repeat(param_file, row_num, varargin)
 
 % Use parameters defined in a row of a text file to run ss-NMF
 %
@@ -8,6 +8,8 @@ function ssNMF_runner_normvar_repeat(param_file, row_num)
 %   Each row in param_file is a sequence of 6 numbers:
 %   rank, betaH, betaW, smoothness, sparsity, max_iter
 %
+%   varargin{1} is the filename of rand_seed numbers, 
+%   if supplied.
 
 
 % Parse input parameters
@@ -22,6 +24,15 @@ sp = P{4};        % sparsity
 sm = P{5};        % smoothness
 max_iter = P{6};  % max iteration
 
+if nargin==3
+    fileID = fopen(varargin{1});
+    P = textscan(fileID,'%d',1,'HeaderLines',row_num);  % read 1 line
+    fclose(fileID);
+    rng(P{1});   % set rnd seed
+else
+    rng(row_num);
+end
+
 
 % Set various paths
 addpath /home/ch153/wjl/ooi_sonar/palm_nmf_matlab
@@ -31,7 +42,7 @@ data_path = '/home/ch153/wjl/ooi_sonar/sample_data';
 data_file = '20150817-20151017_MVBS_PCPcleaned.h5';
 % save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190626';
 % save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190913';
-save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20191025_test';
+save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20191025';
 
 % If save_path does not exist, create it
 if ~exist(save_path, 'dir')
@@ -83,7 +94,6 @@ params.betaW = betaW;
 params.smoothness = sm;
 params.sparsity = sp;
 params.max_iter = max_iter;
-params.random_seed = 'shuffle';
 
 fprintf('%s\n', datetime('now','Format','y-M-d HH:mm:ss'));
 fprintf('  rank=%d\n  betaH=%05.2f\n  betaW=%05.2f\n', ...
@@ -98,7 +108,7 @@ save_file = ...
             params.smoothness, params.sparsity,max_iter,row_num);
 
 fprintf('%s\n', save_file);
-[W, H, objective, iter_times, W_init, H_init, W_steps, H_steps, rng_save] = ...
+[W, H, objective, iter_times, W_init, H_init, W_steps, H_steps] = ...
     palm_nmf_detail(LL, params, iter_save);
 
 save_file = fullfile(save_path, save_file);
@@ -113,7 +123,7 @@ m.objective = objective;
 m.iter_times = iter_times;
 m.iter_save = iter_save;
 m.params = params;
-m.rng = rng_save;
+m.rng = rng;        % state of rng
 m.sigma_all = sigma_all;
 
 fprintf('%s\n', datetime('now','Format','y-M-d HH:mm:ss'));
