@@ -244,3 +244,34 @@ TODO:
   > the nodes you're getting the same values because the cluster nodes each act on a new instance on MATLAB, which uses rng('default') as the initialisation for the random number generator.
 
 - The easiest way to solve this is to set `rng(row_num)` since we just need each element to be different across separate runs, so that off-by-one increament of the rng is good enough to achieve that.
+
+
+# 2019/10/26
+- For some reason it seems that the `rank=3, sm=5e6, sp=5` results from 20190623 batch of ssNMF calculation is a special case, in that there are 3 components left even at step 20000. For almost all the runs with the same parameter combination from 20191025, the 3rd component vanishes after ~step 2000.
+- Confirmed that the difference induced by the different initial conditions from 20190623 run and 20191025 runs are real: can reproduce the same results by running locally using the 20190623 initial W and H conditions. This is in folder `ssNMF_repeat_20191026_runaway` and files:
+ 	- `20190623_ssNMF_runner_normvar_repeat_r05_betaW0.10_betaH0.10_smoothness5.00e+06_sparsity5.00e+00_maxiter1.20e+04_rep006.mat`
+
+  - `20191025_ssNMF_runner_normvar_repeat_r05_betaW0.10_betaH0.10_smoothness5.00e+06_sparsity5.00e+00_maxiter2.00e+03_rep006.mat`
+
+- Issued another round of runs for `sparsity=1` in folder `ssNMF_repeat_20191026` for rank=3-10, sm=5e6
+  - The results seem less stable compare to setting sparsity=5: approximately 4 components would be nonzero at step 20000, with 1 component almost 0. But the 4 components are different from run to run. In the case when sparsity=5, in general only 2 components will remain nonzero, and the 2 are very similar.
+
+
+# 2019/10/27
+- Try to see if controlling betaH and betaW can prevent the runaway behavior.
+  - Use the same parameter as the 20190623 file `ssNMF_runner_normvar_repeat_r05_betaW0.10_betaH0.10_smoothness5.00e+06_sparsity5.00e+00_maxiter1.20e+04_rep006.mat` but set betaH and betaW to 1.
+	- The results will be in folder `ssNMF_repeat_20191026_runaway`, file: `20190623_ssNMF_runner_normvar_repeat_r05_betaW1.00_betaH1.00_smoothness5.00e+06_sparsity5.00e+00_maxiter1.20e+04_rep006.mat` (note betaH=**1.00** and betaW=**1.00**)
+
+
+# 2019/10/28
+- Results from varying betaH and betaW: it seems that by pushing these 2 params much larger, the decomposition will be dominated by the related terms and then won't be able	
+
+
+
+# Summary of folders
+- `ssNMF_repeat_20190623`: rank=2-10, sm=[1,2,5]x[1e5,1e6,1e7,1e8], sp=[1,2,5,10,20,50], max_iter=2e4, betaW=betaH=0.1
+- `ssNMF_repeat_20190626`: rank=2-10, sm=[1,2,5]x[1e1,1e2,1e3,1e4], sp=[1,2,5,10,20,50], max_iter=2e4, betaW=betaH=0.1
+- `ssNMF_repeat_20191025`: rank=2-10, sm=5e6, sp=5, max_iter=2e4, betaW=betaH=0.1
+- `ssNMF_repeat_20191026`: rank=2-10, sm=5e6, sp=1, max_iter=2e4, betaW=betaH=0.1
+- `ssNMF_repeat_20191027`: rank=2-10, sm=5e6, sp=2, max_iter=2e4, betaW=betaH=0.1
+- `ssNMF_betaHW_20191027`: rank=2-10, sm=5e6, sp=2, max_iter=2e3, betaW=betaH=[0, 0.1, 1, 10, 100, 1000, 10000]
