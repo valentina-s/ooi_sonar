@@ -42,7 +42,8 @@ data_path = '/home/ch153/wjl/ooi_sonar/sample_data';
 data_file = '20150817-20151017_MVBS_PCPcleaned.h5';
 % save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190626';
 % save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190913';
-save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20191025';
+% save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20191025';
+save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20191026';
 
 % If save_path does not exist, create it
 if ~exist(save_path, 'dir')
@@ -102,7 +103,7 @@ fprintf('  smoothness=%09.2e\n  sparsity=%09.2e\n',sm,sp);
 fprintf('  max_iter=%09.2e\n', max_iter);
 
 save_file = ...
-    sprintf('%s_r%02d_betaW%2.2f_betaH%2.2f_smoothness%0.2e_sparsity%0.2e_maxiter%0.2e_rep%03d.mat', ...
+    sprintf('%s_r%02d_betaW%2.2f_betaH%2.2f_sm%0.2e_sp%0.2e_maxiter%0.2e_rep%03d.mat', ...
             sname, params.r, ...
             params.betaW, params.betaH, ...
             params.smoothness, params.sparsity,max_iter,row_num);
