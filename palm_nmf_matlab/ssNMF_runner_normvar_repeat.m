@@ -8,13 +8,13 @@ function ssNMF_runner_normvar_repeat(param_file, row_num, varargin)
 %   Each row in param_file is a sequence of 6 numbers:
 %   rank, betaH, betaW, smoothness, sparsity, max_iter
 %
-%   varargin{1} is the filename of rand_seed numbers, 
-%   if supplied.
+%   varargin{1} is the save_path. If not supplied,
+%   save results in the current directory.
 
 
 % Parse input parameters
 fileID = fopen(param_file);
-P = textscan(fileID,'%d %f %f %f %f %f',1,'HeaderLines',row_num);  % read 1 line
+P = textscan(fileID,'%d %f %f %f %f %f %d',1,'HeaderLines',row_num);  % read 1 line
 fclose(fileID);
 
 rank = P{1};
@@ -23,32 +23,28 @@ betaW = P{3};
 sp = P{4};        % sparsity
 sm = P{5};        % smoothness
 max_iter = P{6};  % max iteration
+rng(P{7});        % rng seed
 
 if nargin==3
-    fileID = fopen(varargin{1});
-    P = textscan(fileID,'%d',1,'HeaderLines',row_num);  % read 1 line
-    fclose(fileID);
-    rng(P{1});   % set rnd seed
+    save_path = varargin{1};  % path to save results
 else
-    rng(row_num);
+    save_path = pwd;  % if not specified, save results to current path
 end
+
+rng_start = rng;  % save a copy of the initial rng state
 
 
 % Set various paths
 addpath /home/ch153/wjl/ooi_sonar/palm_nmf_matlab
-% data_path = '~/code_git/ooi_sonar/sample_data';
-% save_path = '~/Downloads/test_runner';
 data_path = '/home/ch153/wjl/ooi_sonar/sample_data';
 data_file = '20150817-20151017_MVBS_PCPcleaned.h5';
-% save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190626';
-% save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20190913';
-% save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20191025';
-save_path = '/scratch/ch153/wjl/nmf_results/ssNMF_sweep_sm_sp_20191026';
+
 
 % If save_path does not exist, create it
 if ~exist(save_path, 'dir')
     mkdir(save_path)
 end
+
 
 cd(data_path)  % has to switch folder to ensure reading h5 files correctly
 
@@ -124,7 +120,7 @@ m.objective = objective;
 m.iter_times = iter_times;
 m.iter_save = iter_save;
 m.params = params;
-m.rng = rng;        % state of rng
+m.rng = rng_start;   % starting state of rng
 m.sigma_all = sigma_all;
 
 fprintf('%s\n', datetime('now','Format','y-M-d HH:mm:ss'));
