@@ -1,9 +1,11 @@
-% Majority of code lifted from https://github.com/raimon-fa/palm-nmf/blob/master/palm_nmf.m
+% Majority of code lifted from 
+%   https://github.com/raimon-fa/palm-nmf/blob/master/palm_nmf.m
 % Modified so that can save detailed output for individual steps (June 2019)
-% Took out the 'random_seed' flag since it was not actually implemented before even though option exists (Oct-25 2019)
+% Took out the 'random_seed' flag since it was not actually implemented 
+%   before even though option exists (Oct-25 2019)
 
-function [W, H, objective, iter_times, W_init, H_init, W_steps, ...
-	   H_steps] = palm_nmf_detail(V, params, varargin)
+function [W, H, objective, iter_times, W_init, H_init, W_steps, H_steps] = ...
+    palm_nmf_detail(V, params, varargin)
 % Algorithm for NMF with eucidian norm as objective function and 
 %L1 constraint on W for sparse paterns and Tikhonov regularization 
 %for smooth activation coefficients.
@@ -28,12 +30,13 @@ function [W, H, objective, iter_times, W_init, H_init, W_steps, ...
 %                                             i.e., no early stopping)
 %     init_W:   initial setting for W (default: random; 
 %                                      either init_w or r have to be set)
+%
+%     init_H:   initial setting for H (default: random)
+%
 %     r: (K)       # basis functions (default: based on init_w's size;
 %                                  either init_w or r have to be set)
-%     init_H:   initial setting for H (default: random)
-%     init_W:   initial setting for W (default: random)
 %
-%     gamma1:   constant > 1 for the gradient descend step of W.
+%     gamma1:   constant > 1 for the gradient descend step of H.
 %
 %     gamma2:   constant > 1 for the gradient descend step of W.
 %
