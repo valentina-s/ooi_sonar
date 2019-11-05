@@ -21,13 +21,15 @@ fileID = fopen(param_file);
 P = textscan(fileID,'%d %f %f %f %f %f %d',1,'HeaderLines',row_num);  % read 1 line
 fclose(fileID);
 
-rank = P{1};
+r = P{1};
 betaH = P{2};
 betaW = P{3};
 sp = P{4};        % sparsity
 sm = P{5};        % smoothness
 max_iter = P{6};  % max iteration
-rng(P{7});        % rng seed
+rep_num = P{7};      % rep number
+
+rng(rep_num);        % rng seed
 
 if nargin>=3
     save_path = varargin{1};  % path to save results
@@ -95,7 +97,7 @@ end
 
 
 % Run ss-NMF
-params.r = rank;
+params.r = r;
 params.betaH = betaH;
 params.betaW = betaW;
 params.smoothness = sm;
@@ -103,20 +105,23 @@ params.sparsity = sp;
 params.max_iter = max_iter;
 params.opt_autostop = opt_autostop;
 
-fprintf('%s\n', datetime('now','Format','y-M-d HH:mm:ss'));
-fprintf('  rank=%d\n  betaH=%05.2f\n  betaW=%05.2f\n', ...
-    rank, betaH, betaW);
-fprintf('  smoothness=%09.2e\n  sparsity=%09.2e\n',sm,sp);
-fprintf('  max_iter=%09.2e\n', max_iter);
+fprintf('  rank       = %d\n', r);
+fprintf('  betaH      = %.2e\n', betaH);
+fprintf('  betaW      = %.2e\n', betaW);
+fprintf('  sparsity   = %.2e\n', sp);
+fprintf('  smoothness = %.2e\n', sm);
+fprintf('  max_iter   = %.2e\n', max_iter);
+fprintf('  rep_num    = %d\n', rep_num);
+fprintf('  autostop   = %d\n', opt_autostop);
 
 save_file = ...
     sprintf('%s_r%02d_betaW%2.2f_betaH%2.2f_sm%0.2e_sp%0.2e_maxiter%0.2e_rep%03d.mat', ...
             sname, params.r, ...
             params.betaW, params.betaH, ...
-            params.smoothness, params.sparsity,max_iter,row_num);
+            params.smoothness, params.sparsity,max_iter,rep_num);
 
 fprintf('%s\n', save_file);
-[W, H, objective, iter_times, W_init, H_init, W_steps, H_steps] = ...
+[W, H, objective, iter_times, iter_save_out, W_init, H_init, W_steps, H_steps] = ...
     palm_nmf_detail(LL, params, iter_save);
 
 save_file = fullfile(save_path, save_file);
@@ -128,6 +133,7 @@ m.H_init = H_init;
 m.W_steps = W_steps;
 m.H_steps = H_steps;
 m.objective = objective;
+m.iter_save_out = iter_save_out;
 m.iter_times = iter_times;
 m.iter_save = iter_save;
 m.params = params;

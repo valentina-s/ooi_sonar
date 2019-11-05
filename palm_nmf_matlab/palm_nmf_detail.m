@@ -380,6 +380,9 @@ elseif lambda > 0 && eta > 0
             save_iter_count = save_iter_count+1;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        if it==11
+            last_objective=0; 
+        end
         % Check objective to determine if to run
         % the next iteration
         if opt_autostop == 1
