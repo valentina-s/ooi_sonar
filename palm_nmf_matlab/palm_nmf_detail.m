@@ -4,7 +4,7 @@
 % Took out the 'random_seed' flag since it was not actually implemented 
 %   before even though option exists (Oct-25 2019)
 
-function [W, H, objective, iter_times, W_init, H_init, W_steps, H_steps] = ...
+function [W, H, objective, iter_times, iter_save_out, W_init, H_init, W_steps, H_steps] = ...
     palm_nmf_detail(V, params, varargin)
 % Algorithm for NMF with eucidian norm as objective function and 
 %L1 constraint on W for sparse paterns and Tikhonov regularization 
@@ -41,8 +41,17 @@ function [W, H, objective, iter_times, W_init, H_init, W_steps, H_steps] = ...
 %     gamma2:   constant > 1 for the gradient descend step of W.
 %
 %     betaH:   constant. L-2 constraint for H.
+%
 %     betaW:   constant. L-2 constraint for W.
-
+%
+%     opt_autostop: whether or not to stop automatically
+%                   when objective start to increase.
+%                   opt_autostop=1: autostop
+%                   opt_autostop=0: run to max_iter (default)
+%
+% varargin{3}:  iter_save: iterations to save H and W
+%
+%
 % Outputs:
 % W: matrix of basis functions
 % H: matrix of activations
@@ -55,7 +64,7 @@ function [W, H, objective, iter_times, W_init, H_init, W_steps, H_steps] = ...
 
 
 % Check input for iterations to save
-if nargin==3  % if iteration steps are specified
+if nargin>=3  % if iteration steps are specified
     iter_save = varargin{1};
     fprintf('Iterations to save are: %s\n',...
             strjoin(cellstr(num2str(iter_save(:))),','));
@@ -63,6 +72,7 @@ else
     iter_save = [];  % save all steps
     disp('Save all iterations')
 end
+
 
 % Get other parameters
 m = size(V, 1);
@@ -99,6 +109,11 @@ if ~isfield(params, 'gamma2')
 else
     gamma2 = params.gamma2;
 end
+if ~isfield(params, 'opt_autostop')
+    opt_autostop = 0;
+else
+    opt_autostop = params.opt_autostop;
+end
 
 
 % Initialize W and H
@@ -130,13 +145,16 @@ iter_times = zeros(params.max_iter,1);
 H_init = H;  % initial H
 W_init = W;  % initial W
 if ~isempty(iter_save)  % only save specified iterations
-    H_steps = zeros(r, n, length(iter_save));  % H size: [m x r]
-    W_steps = zeros(m, r, length(iter_save));  % W size: [r x n]
+    H_steps = zeros(r, n, length(iter_save));    % H size: [m x r]
+    W_steps = zeros(m, r, length(iter_save));    % W size: [r x n]
+    iter_save_out = zeros(length(iter_save),1);  % iterations saved
 else
-    H_steps = zeros(r, n, params.max_iter);  % H size: [m x r]
-    W_steps = zeros(m, r, params.max_iter);  % W size: [r x n]
+    H_steps = zeros(r, n, params.max_iter);    % H size: [m x r]
+    W_steps = zeros(m, r, params.max_iter);    % W size: [r x n]
+    iter_save_out = zeros(params.max_iter,1);  % iterations saved
 end
-save_iter_count = 1;  % counter for saved iterations
+save_iter_count = 1;    % counter for saved iterations
+last_objective = Inf;   % var to store last objective
 
 tic
 if lambda == 0 && eta == 0
@@ -172,11 +190,30 @@ if lambda == 0 && eta == 0
             if ismember(it, iter_save)
                 H_steps(:,:,save_iter_count) = H;
                 W_steps(:,:,save_iter_count) = W;
+                iter_save_out(save_iter_count) = it;
                 save_iter_count = save_iter_count+1;
             end
         else
             H_steps(:,:,it) = H;
             W_steps(:,:,it) = W;
+            iter_save_out(save_iter_count) = it;
+            save_iter_count = save_iter_count+1;
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Check objective to determine if to run
+        % the next iteration
+        if opt_autostop == 1
+            if last_objective > objective(it)  % if objective decreases
+                                               % go to next iteration
+                last_objective = objective(it);
+            else   % if objective does not decrease, abort and save iter
+                if ~ismember(it, iter_save)  % if results not already saved
+                    H_steps(:,:,save_iter_count) = H;
+                    W_steps(:,:,save_iter_count) = W;
+                    iter_save_out(save_iter_count) = it;
+                end
+                break;
+            end
         end
     end
 elseif lambda > 0 && eta == 0
@@ -209,11 +246,30 @@ elseif lambda > 0 && eta == 0
             if ismember(it, iter_save)
                 H_steps(:,:,save_iter_count) = H;
                 W_steps(:,:,save_iter_count) = W;
+                iter_save_out(save_iter_count) = it;
                 save_iter_count = save_iter_count+1;
             end
         else
             H_steps(:,:,it) = H;
             W_steps(:,:,it) = W;
+            iter_save_out(save_iter_count) = it;
+            save_iter_count = save_iter_count+1;
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Check objective to determine if to run
+        % the next iteration
+        if opt_autostop == 1
+            if last_objective > objective(it)  % if objective decreases
+                                               % go to next iteration
+                last_objective = objective(it);
+            else   % if objective does not decrease, abort and save iter
+                if ~ismember(it, iter_save)  % if results not already saved
+                    H_steps(:,:,save_iter_count) = H;
+                    W_steps(:,:,save_iter_count) = W;
+                    iter_save_out(save_iter_count) = it;
+                end
+                break;
+            end
         end
     end
 elseif lambda == 0 && eta > 0
@@ -251,13 +307,32 @@ elseif lambda == 0 && eta > 0
             if ismember(it, iter_save)
                 H_steps(:,:,save_iter_count) = H;
                 W_steps(:,:,save_iter_count) = W;
+                iter_save_out(save_iter_count) = it;
                 save_iter_count = save_iter_count+1;
             end
         else
             H_steps(:,:,it) = H;
             W_steps(:,:,it) = W;
+            iter_save_out(save_iter_count) = it;
+            save_iter_count = save_iter_count+1;
         end
-    end  
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Check objective to determine if to run
+        % the next iteration
+        if opt_autostop == 1
+            if last_objective > objective(it)  % if objective decreases
+                                               % go to next iteration
+                last_objective = objective(it);
+            else   % if objective does not decrease, abort and save iter
+                if ~ismember(it, iter_save)  % if results not already saved
+                    H_steps(:,:,save_iter_count) = H;
+                    W_steps(:,:,save_iter_count) = W;
+                    iter_save_out(save_iter_count) = it;
+                end
+                break;
+            end
+        end
+    end
 elseif lambda > 0 && eta > 0
     %%% SMOOTH and SPARSE NMF %%%
     %Tikhonov regularization matrix
@@ -295,11 +370,30 @@ elseif lambda > 0 && eta > 0
             if ismember(it, iter_save)
                 H_steps(:,:,save_iter_count) = H;
                 W_steps(:,:,save_iter_count) = W;
+                iter_save_out(save_iter_count) = it;
                 save_iter_count = save_iter_count+1;
             end
         else
             H_steps(:,:,it) = H;
             W_steps(:,:,it) = W;
+            iter_save_out(save_iter_count) = it;
+            save_iter_count = save_iter_count+1;
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Check objective to determine if to run
+        % the next iteration
+        if opt_autostop == 1
+            if last_objective > objective(it)  % if objective decreases
+                                               % go to next iteration
+                last_objective = objective(it);
+            else   % if objective does not decrease, abort and save iter
+                if ~ismember(it, iter_save)  % if results not already saved
+                    H_steps(:,:,save_iter_count) = H;
+                    W_steps(:,:,save_iter_count) = W;
+                    iter_save_out(save_iter_count) = it;
+                end
+                break;
+            end
         end
     end
 else

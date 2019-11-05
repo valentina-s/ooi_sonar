@@ -10,6 +10,10 @@ function ssNMF_runner_normvar_repeat(param_file, row_num, varargin)
 %
 %   varargin{1} is the save_path. If not supplied,
 %   save results in the current directory.
+%
+%   varargin{2} is opt_autostop. If 1-autostop, 
+%   if 0-run to max_iter
+
 
 
 % Parse input parameters
@@ -25,10 +29,16 @@ sm = P{5};        % smoothness
 max_iter = P{6};  % max iteration
 rng(P{7});        % rng seed
 
-if nargin==3
+if nargin>=3
     save_path = varargin{1};  % path to save results
 else
     save_path = pwd;  % if not specified, save results to current path
+end
+
+if nargin==4
+    opt_autostop = varargin{4};   % is opt_autostop is set
+else
+    opt_autostop = 0;   % no autostop, run to max_iter
 end
 
 rng_start = rng;  % save a copy of the initial rng state
@@ -91,6 +101,7 @@ params.betaW = betaW;
 params.smoothness = sm;
 params.sparsity = sp;
 params.max_iter = max_iter;
+params.opt_autostop = opt_autostop;
 
 fprintf('%s\n', datetime('now','Format','y-M-d HH:mm:ss'));
 fprintf('  rank=%d\n  betaH=%05.2f\n  betaW=%05.2f\n', ...
