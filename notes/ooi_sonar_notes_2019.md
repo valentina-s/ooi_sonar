@@ -263,8 +263,53 @@ TODO:
 	- The results will be in folder `ssNMF_repeat_20191026_runaway`, file: `20190623_ssNMF_runner_normvar_repeat_r05_betaW1.00_betaH1.00_smoothness5.00e+06_sparsity5.00e+00_maxiter1.20e+04_rep006.mat` (note betaH=**1.00** and betaW=**1.00**)
 
 
-# 2019/10/28
-- Results from varying betaH and betaW: it seems that by pushing these 2 params much larger, the decomposition will be dominated by the related terms and then won't be able	
+# 2019/11/04
+- Results from varying betaH and betaW: it seems that by pushing these 2 params much larger, the decomposition will be dominated by these two terms and won't adapt to the data.
+	- code used to run decomposition:
+		- shell scripts under `run_ssNMF_20191027_betaHW`
+		- function `ssNMF_runner_normvar_betaHW.m`
+		- note that betaHW=10 was missed the first time the batch job was sent, so there is an additional `run_ssNMF_array_20191027_betaHW10_allrank.sh` to run it separately
+	- code use to plot results:
+		- `check_betaHW_run.m`
+	- from the results, for `betaHW>=1` the algorithm does not adapt to data, so it seems that `betaHW=0.1` is still the best option. Also **it doesn't seem that by pushing betaHW higher the runaway problem could be solved.**
+- Need to revise the ssNMF runner to save also the H and W with the smallest objective -- this can be done by continuing to replace the last H-W pair until reaching the smallest objective
+
+
+# 2019/11/05
+- Need to run a few more param combinations, especially with smaller sparsity constraints
+	- combinations stored in `params_20191105_1.txt`:
+	```
+	rank_all = 2:10;
+	sm_all = [5e6];  % smoothness
+	sp_all = [0.1, 0.2, 0.5, 10, 20];  % sparsity
+	rep_all = 1:10;   % repetitions
+	betaHW = 0.1;
+	max_iter = 2e4;    % max iteration
+	```
+	- results stored in `ssNMF_20191105`
+	- somehow the `rep_num` at the end was coded as `row_num` when the code was run, so have to change that in batch
+	- copied the first 1-10 reps from folders `ssNMF_repeat_20191025-27` for all rank.
+
+
+# 2019/11/06
+- Send a few more runs to go with 2019/11/05 calculations:
+	- combinations stored in `params_20191106_1.txt`: (change only `sm_all` from ssNMF_20191105)
+	```
+	rank_all = 2:10;
+	sm_all = [5e4];  % smoothness
+	sp_all = [0.1, 0.2, 0.5, 10, 20];  % sparsity
+	rep_all = 1:10;   % repetitions
+	betaHW = 0.1;
+	max_iter = 2e4;    % max iteration
+	```
+- Realized that the plotting routines for W in the last few weeks did not rescale the data based on the pixel-wise variance (since ss-NMF was done on normalized data). **After rescaling, the frequency trend becomes consistent with those from tensor analysis.** (Whew!)
+- Effect of sparsity:
+	- The general pattern is conserved if using the run with the lowest objective:
+		![](./imgs/cmp_r3_sm5e6_sp0.1-0.5-1.png)
+	- **Need to check if the lowest objective was always from a particular initial condition** --> doesn't seem so because for sp=1 the order of components are different from sp=0.1 and sp=0.5 results
+- code:
+	- `best_in_rep_20191105.m` finds the rep that has the lowest objective and plot its H and W; it also plots the objective variation across different reps.
+	- `best_in_rep_20191025.m` does the same thing, just over 100 reps with identical sm=5e6 and sp=1,2,5. The sp range for 20191105 is wider. It checks results from folders `ssNMF_repeat_20191025-27`.
 
 
 
@@ -275,3 +320,4 @@ TODO:
 - `ssNMF_repeat_20191026`: rank=2-10, sm=5e6, sp=1, max_iter=2e4, betaW=betaH=0.1
 - `ssNMF_repeat_20191027`: rank=2-10, sm=5e6, sp=2, max_iter=2e4, betaW=betaH=0.1
 - `ssNMF_betaHW_20191027`: rank=2-10, sm=5e6, sp=2, max_iter=2e3, betaW=betaH=[0, 0.1, 1, 10, 100, 1000, 10000]
+	- results in `check_ssNMF_betaHW_20191027`
