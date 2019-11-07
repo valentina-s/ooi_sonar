@@ -27,7 +27,7 @@ max_iter = 2e4;
 rep_num = 10;
 
 for r = 3
-for sp = [1]
+for sp = [0.1, 0.2, 0.5, 1, 2, 5]
     
 sg_str = sprintf('rank=%2d, sm=%.2e, sp=%.1f',...
     r, sm, sp);    
@@ -138,7 +138,8 @@ xlabel('Run number','fontsize',12);
 ylabel('Min objective','fontsize',12);
 title(sg_str)
 
-% Save summary figs
+
+% Save summary figs and and results
 saveas(fig_W_norm, fullfile(save_path, [fig_str, '_Wmin_normalized.png']));
 saveas(fig_W_norm, fullfile(save_path, [fig_str, '_Wmin_normalized.fig']));
 saveas(fig_W_res, fullfile(save_path, [fig_str, '_Wmin_rescaled.png']));
