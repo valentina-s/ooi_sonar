@@ -306,18 +306,37 @@ TODO:
 - Effect of sparsity:
 	- The general pattern is conserved if using the run with the lowest objective:
 		![](./imgs/cmp_r3_sm5e6_sp0.1-0.5-1.png)
-	- **Need to check if the lowest objective was always from a particular initial condition** --> doesn't seem so because for sp=1 the order of components are different from sp=0.1 and sp=0.5 results
+	- Need to check if the lowest objective was always from a particular initial condition --> doesn't seem so because for sp=1 the order of components are different from sp=0.1 and sp=0.5 results --> answered in 2019/11/07, it does affect for results from similar sparsity.
 - code:
-	- `best_in_rep_20191105.m` finds the rep that has the lowest objective and plot its H and W; it also plots the objective variation across different reps.
-	- `best_in_rep_20191025.m` does the same thing, just over 100 reps with identical sm=5e6 and sp=1,2,5. The sp range for 20191105 is wider. It checks results from folders `ssNMF_repeat_20191025-27`.
+	- `lowest_objective_in_rep_20191105.m` finds the rep that has the lowest objective and plot its H and W; it also plots the objective variation across different reps.
+	- `lowest_objective_in_rep_20191025.m` does the same thing, just over 100 reps with identical sm=5e6 and sp=1,2,5. The sp range for 20191105 is wider. It checks results from folders `ssNMF_repeat_20191025-27`.
+
+
+# 2019/11/07
+- There is a question of whether or not the rouhgly steady, zooplankton-like background is real. It shows up in both tensor and ssNMF results, but it could potentially be due to false compensation of seawater absorption? **NEED TO LOOK INTO CALIBRATION PARAMETERS RIGOROUSLY!**
+- Systematically check results from `ssNMF_20191105`
+	- the higher the sparsity, the stronger the representation for the DVM (peaks at ~day 30) and daytime subsurface (parks in the beginning) components; other components eventually get squashed when the sparsity is driven higher
+	- sp=0.1 and sp=0.2 seem to below to the same regime where identical initial condition leads to similar patterns and which run results in the lowest objective
+	- sp=0.5 seems to below to another regime where there is no obvious similarity in the component sequence and patterns
+	- there start to be zero patterns when sp=2, for all rank>3; for rank=3 zero component appears starting from sp=5
+	- sp=0.5 seems a good compromise between pushing for sparsity but still require some reconstruction fidelity. **NEED TO CHECK THIS!** This statement here is based on the observation that for sp>=1, the activation difference between the components start to deviate significantly.
+	- results below:
+		![rank=3](./imgs/cmp_r03_sm5e6_sp0.1-0.2-0.5-1-2.png)
+		![rank=4](./imgs/cmp_r03_sm5e6_sp0.1-0.2-0.5-1-2.png)
+		![rank=5](./imgs/cmp_r03_sm5e6_sp0.1-0.2-0.5-1-2.png)
+		![rank=6](./imgs/cmp_r03_sm5e6_sp0.1-0.2-0.5-1-2.png)
+- Need another batch of comparison, for some param combinations but with different rank. Check if higher rank gives better reconstruction.
+
 
 
 
 # Summary of folders
 - `ssNMF_repeat_20190623`: rank=2-10, sm=[1,2,5]x[1e5,1e6,1e7,1e8], sp=[1,2,5,10,20,50], max_iter=2e4, betaW=betaH=0.1
 - `ssNMF_repeat_20190626`: rank=2-10, sm=[1,2,5]x[1e1,1e2,1e3,1e4], sp=[1,2,5,10,20,50], max_iter=2e4, betaW=betaH=0.1
-- `ssNMF_repeat_20191025`: rank=2-10, sm=5e6, sp=5, max_iter=2e4, betaW=betaH=0.1
-- `ssNMF_repeat_20191026`: rank=2-10, sm=5e6, sp=1, max_iter=2e4, betaW=betaH=0.1
-- `ssNMF_repeat_20191027`: rank=2-10, sm=5e6, sp=2, max_iter=2e4, betaW=betaH=0.1
-- `ssNMF_betaHW_20191027`: rank=2-10, sm=5e6, sp=2, max_iter=2e3, betaW=betaH=[0, 0.1, 1, 10, 100, 1000, 10000]
+- `ssNMF_repeat_20191025`: rank=2-10, sm=5e6, *sp=5*, max_iter=2e4, betaW=betaH=0.1, 100 reps
+- `ssNMF_repeat_20191026`: rank=2-10, sm=5e6, *sp=1*, max_iter=2e4, betaW=betaH=0.1, 100 reps
+- `ssNMF_repeat_20191027`: rank=2-10, sm=5e6, *sp=2*, max_iter=2e4, betaW=betaH=0.1, 100 reps
+- `ssNMF_betaHW_20191027`: rank=2-10, sm=5e6, sp=2, max_iter=2e3, *betaW=betaH=[0, 0.1, 1, 10, 100, 1000, 10000]*, 2 reps
 	- results in `check_ssNMF_betaHW_20191027`
+- `ssNMF_20191105`: rank=2-10, *sm=5e6*, sp=0.1, 0.2, 0.5, 1, 2, 5, 10, 20, betaW=betaH=0.1, max_iter=2e4, 10 reps
+- `ssNMF_20191106`: rank=2-10, *sm=5e4*, sp=0.1, 0.2, 0.5, 1, 2, 5, 10, 20, betaW=betaH=0.1, max_iter=2e4, 10 reps

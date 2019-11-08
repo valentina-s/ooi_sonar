@@ -36,7 +36,7 @@ switch sp
     case 5
         data_path = '/Volumes/MURI_4TB/nmf_results/ssNMF_repeat_20191025/';
 end
-save_path = '/Volumes/MURI_4TB/nmf_results/best_in_rep_20191025';
+save_path = '/Volumes/MURI_4TB/nmf_results/lowest_objective_in_rep_20191025';
 
 
 % If save_path does not exist, create it

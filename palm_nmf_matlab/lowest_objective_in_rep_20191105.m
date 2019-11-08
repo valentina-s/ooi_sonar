@@ -14,7 +14,7 @@ cd(curr_path)
 
 % Paths
 data_path = '/Volumes/MURI_4TB/nmf_results/ssNMF_20191105/';
-save_path = '/Volumes/MURI_4TB/nmf_results/best_in_rep_20191105';
+save_path = '/Volumes/MURI_4TB/nmf_results/lowest_objective_in_rep_20191105';
 
 
 % ss-NMF parameters
