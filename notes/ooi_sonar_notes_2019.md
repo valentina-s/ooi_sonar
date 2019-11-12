@@ -322,12 +322,19 @@ TODO:
 	- sp=0.5 seems a good compromise between pushing for sparsity but still require some reconstruction fidelity. **NEED TO CHECK THIS!** This statement here is based on the observation that for sp>=1, the activation difference between the components start to deviate significantly.
 	- results below:
 		![rank=3](./imgs/cmp_r03_sm5e6_sp0.1-0.2-0.5-1-2.png)
-		![rank=4](./imgs/cmp_r03_sm5e6_sp0.1-0.2-0.5-1-2.png)
-		![rank=5](./imgs/cmp_r03_sm5e6_sp0.1-0.2-0.5-1-2.png)
-		![rank=6](./imgs/cmp_r03_sm5e6_sp0.1-0.2-0.5-1-2.png)
-- Need another batch of comparison, for some param combinations but with different rank. Check if higher rank gives better reconstruction.
+		![rank=4](./imgs/cmp_r04_sm5e6_sp0.1-0.2-0.5-1-2.png)
+		![rank=5](./imgs/cmp_r05_sm5e6_sp0.1-0.2-0.5-1-2.png)
+		![rank=6](./imgs/cmp_r06_sm5e6_sp0.1-0.2-0.5-1-2.png)
+- **Need another batch of comparison, for some param combinations but with different rank. Check if higher rank gives better reconstruction.**
 
 
+# 2019/11/12
+- Compiled outputs from 20191105 and 20191106 runs (sm=5e6 and sm=5e4, with sp sweeping from 0.1 to 5)
+	- compiled figures located at `notes/imgs`
+- Start looking more carefully for the results in repeated runs
+	- code: `all_reps_HW_20191106.m`
+	- only worked up until half way, was able to use correlation coefficients of the H activations to match the components across runs within the same parameter combination
+	- **next step: figure out a good way to visualize the results for both H and W, so that can answer the question: is the run with the lowest reconstruction error and/or the lowest objective a "normal" run? i.e., does it converge to something that looks like most of the other runs?**
 
 
 # Summary of folders
