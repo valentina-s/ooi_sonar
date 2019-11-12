@@ -321,10 +321,10 @@ TODO:
 	- there start to be zero patterns when sp=2, for all rank>3; for rank=3 zero component appears starting from sp=5
 	- sp=0.5 seems a good compromise between pushing for sparsity but still require some reconstruction fidelity. **NEED TO CHECK THIS!** This statement here is based on the observation that for sp>=1, the activation difference between the components start to deviate significantly.
 	- results below:
-		![rank=3](./imgs/cmp_r03_sm5e6_sp0.1-0.2-0.5-1-2.png)
-		![rank=4](./imgs/cmp_r04_sm5e6_sp0.1-0.2-0.5-1-2.png)
-		![rank=5](./imgs/cmp_r05_sm5e6_sp0.1-0.2-0.5-1-2.png)
-		![rank=6](./imgs/cmp_r06_sm5e6_sp0.1-0.2-0.5-1-2.png)
+		![rank=3](./imgs/20191107/cmp_r03_sm5e6_sp0.1-0.2-0.5-1-2.png)
+		![rank=4](./imgs/20191107/cmp_r04_sm5e6_sp0.1-0.2-0.5-1-2.png)
+		![rank=5](./imgs/20191107/cmp_r05_sm5e6_sp0.1-0.2-0.5-1-2.png)
+		![rank=6](./imgs/20191107/cmp_r06_sm5e6_sp0.1-0.2-0.5-1-2.png)
 - **Need another batch of comparison, for some param combinations but with different rank. Check if higher rank gives better reconstruction.**
 
 
