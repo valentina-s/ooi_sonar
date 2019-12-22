@@ -5,6 +5,5 @@
 .gitignore~
 *~
 decomp_results*
-sample_data/
 palm_nmf_matlab/log/
 */log/
