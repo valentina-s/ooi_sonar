@@ -337,6 +337,30 @@ TODO:
 	- **next step: figure out a good way to visualize the results for both H and W, so that can answer the question: is the run with the lowest reconstruction error and/or the lowest objective a "normal" run? i.e., does it converge to something that looks like most of the other runs?**
 
 
+# 2019/12/20
+Reproduce MVBS data for decomposition:
+- found out in echopype right now MVBS calculation is based on mean in log domain, need to change it to linear domain
+- was able to use `coarsen` to compute MVBS (when based on _index_ along `ping_time`); verified that the resulting values are equivalent up to 1e-14 --> see notebook `paper_data_reproduce/mvbs_single_file`
+- was able to use resample along `ping_time` and then `groupby_bins` along `range_bin` to compute MVBS (when based on the actual timestamp -- `coarsen` only works for index)
+- `paper_data_reproduce/mvbs_single_file`: compare using `coarsen` (based on index) and brute force MVBS calculation --> verified that the results are the same up to 1e-14.
+- `paper_data_reproduce/mvbs_multiple_files.ipynb`: Compare MVBS calculation based on index (using coarsen) and based on time (resample + groupby_bins). Here the resample interval is '1H' so the wait time is reasonable with 5 files open simultaneously.
+
+
+# 2019/12/21
+- It's interesting to see that, for doing 5-min `DataArray.resample` (data is ~1 second pinging interval), it is taking forever to build a graph if the chunks are 4000 and the whole thing stalled, but the same operation is doable albeit slow when the chunks are the size of the file.
+- `paper_data_reproduce/mvbs_5min_chunk_filesize.ipynb.ipynb`: use each file size as a chunk and try to do 5-min resample. The same operation is not possible with chunk=4000. The file size makes each chunk ~28700.
+- `paper_data_reproduce/mvbs_200sec_loop_through_Sv_files.ipynb`: loop through all Sv files to calculate MVBS based on 200-sec intervals
+- `paper_data_reproduce/mvbs_200sec_loop_through_SvClean_files.ipynb`: loop through all Sv_clean files to calculate MVBS based on 200-sec intervals
+- `paper_data_reproduce/reproduce_noise_removal.ipynb`: reproduce the noise removal procedure
+
+TODO:
+- [x] use `map` instead of `groupby-apply` to implement noise removal
+- [x] make the data variable in Sv_clean also `Sv`, so that `get_MVBS` can just use the same variable name
+- [ ] allow MVBS calculation using the actual ping_time as well as ping number index
+- [ ] add source files used to calculate MVBS in the output MVBS file
+
+
+-----------------------------------------------------------
 # Summary of folders
 - `ssNMF_repeat_20190623`: rank=2-10, sm=[1,2,5]x[1e5,1e6,1e7,1e8], sp=[1,2,5,10,20,50], max_iter=2e4, betaW=betaH=0.1
 - `ssNMF_repeat_20190626`: rank=2-10, sm=[1,2,5]x[1e1,1e2,1e3,1e4], sp=[1,2,5,10,20,50], max_iter=2e4, betaW=betaH=0.1
