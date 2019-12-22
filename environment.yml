@@ -3,13 +3,16 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+  - dask
   - h5py
   - ipykernel
   - jupyter
   - matplotlib
+  - netCDF4
   - numpy
   - pandas
   - python
+  - requests
   - scipy
   - scikit-image
   - scikit-learn
